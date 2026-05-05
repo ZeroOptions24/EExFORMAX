@@ -419,7 +419,7 @@
       background: var(--brand-soft);
       box-shadow: 0 0 0 3px rgba(31,107,58,.10);
     }
-    .prefill-suggested:not(.active) {
+    .prefill-suggested:not(.active):not(.primary-topic):not(.secondary-topic) {
       border-color: var(--brand);
       box-shadow: 0 0 0 3px rgba(31,107,58,.18);
       animation: prefillPulse 1.8s ease-in-out infinite;
@@ -427,6 +427,56 @@
     @keyframes prefillPulse {
       0%, 100% { box-shadow: 0 0 0 3px rgba(31,107,58,.18); }
       50%      { box-shadow: 0 0 0 6px rgba(31,107,58,.08); }
+    }
+    .topic-btn.primary-topic {
+      border-color: var(--brand);
+      background: var(--brand-soft);
+      box-shadow: 0 0 0 3px rgba(31,107,58,.18);
+    }
+    .topic-btn.primary-topic .topic-tag {
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+    }
+    .topic-btn.secondary-topic {
+      border-color: var(--brand);
+      border-style: dashed;
+      background: rgba(31,107,58,.04);
+    }
+    .topic-btn.secondary-topic .topic-tag {
+      background: rgba(31,107,58,.12);
+      color: var(--brand);
+    }
+    .secondary-topics-card {
+      border-left: 4px solid var(--brand);
+      background: rgba(31,107,58,.04);
+      margin-bottom: 16px;
+    }
+    .secondary-topics-card.hidden { display: none; }
+    .secondary-topic-item {
+      padding: 10px 12px;
+      margin-top: 8px;
+      border: 1px solid #d9e2dc;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .secondary-topic-item:first-child { margin-top: 0; }
+    .secondary-topic-item .secondary-topic-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--brand);
+      margin-bottom: 4px;
+    }
+    .secondary-topic-item .secondary-topic-text {
+      font-size: 14px;
+      color: #1b1f1c;
+      line-height: 1.5;
+    }
+    #startGuideBtn[disabled] {
+      opacity: .45;
+      cursor: not-allowed;
     }
     .choice-icon {
       width: 44px;
@@ -1485,7 +1535,7 @@
         <div class="card" id="themeCard" style="display:none;">
           <div class="badge">Thema</div>
           <div class="card-title">Worum geht es im Gespräch?</div>
-          <div class="card-help">Auch das ist Vorbereitung: Erst wenn das Thema feststeht, beginnt der eigentliche Gesprächsablauf.</div>
+          <div class="card-help">Mehrfachauswahl möglich. <strong>Erstes ausgewähltes Thema = Haupt-Thema</strong> (steuert den Leitfaden). Weitere Themen werden im Gespräch nur kurz angesprochen.</div>
           <div class="grid-1">
             <button class="choice topic-btn" type="button" data-topic="pv" id="topic-pv">
               <div class="choice-icon">☀️</div>
@@ -1493,7 +1543,7 @@
                 <div class="choice-title">Photovoltaik</div>
                 <div class="choice-text">Interesse an PV-Anlage oder Speicher.</div>
               </div>
-              <div class="choice-tag">Thema wählen</div>
+              <div class="choice-tag topic-tag">Thema wählen</div>
             </button>
             <button class="choice topic-btn" type="button" data-topic="wp" id="topic-wp">
               <div class="choice-icon">🔥</div>
@@ -1501,16 +1551,27 @@
                 <div class="choice-title">Wärmepumpe</div>
                 <div class="choice-text">Interesse an Wärmepumpe oder Heizungstausch.</div>
               </div>
-              <div class="choice-tag">Thema wählen</div>
+              <div class="choice-tag topic-tag">Thema wählen</div>
             </button>
-            <button class="choice topic-btn" type="button" data-topic="sg" id="topic-sg">
+            <button class="choice topic-btn" type="button" data-topic="sv" id="topic-sv">
               <div class="choice-icon">⚡</div>
               <div>
-                <div class="choice-title">Strom &amp; Gas</div>
-                <div class="choice-text">Strom- oder Gasvertrag optimieren.</div>
+                <div class="choice-title">Stromvergleich</div>
+                <div class="choice-text">Aktuellen Stromtarif vergleichen und optimieren.</div>
               </div>
-              <div class="choice-tag">Thema wählen</div>
+              <div class="choice-tag topic-tag">Thema wählen</div>
             </button>
+            <button class="choice topic-btn" type="button" data-topic="gv" id="topic-gv">
+              <div class="choice-icon">🔥</div>
+              <div>
+                <div class="choice-title">Gasvergleich</div>
+                <div class="choice-text">Aktuellen Gastarif vergleichen und optimieren.</div>
+              </div>
+              <div class="choice-tag topic-tag">Thema wählen</div>
+            </button>
+          </div>
+          <div style="margin-top:18px; display:flex; justify-content:flex-end;">
+            <button class="btn-primary" type="button" id="startGuideBtn" disabled>Gespräch starten →</button>
           </div>
         </div>
       </div>
@@ -1539,6 +1600,13 @@
           </div>
         </div>
 
+        <div class="card secondary-topics-card hidden" id="secondaryTopicsCard">
+          <div class="badge">Auch ansprechen</div>
+          <div class="card-title" style="font-size:16px;">Neben dem Hauptthema kurz erwähnen</div>
+          <div class="card-help" style="margin-bottom:12px;">Diese Themen hat der Kunde zusätzlich angegeben. Streu am Ende des Gesprächs 1–2 Sätze ein – nicht das Hauptthema verwässern.</div>
+          <div id="secondaryTopicsList"></div>
+        </div>
+
         <div class="spoken-block active" id="spoken-wp">
           <div class="spoken-label">Wärmepumpe · Gesprächseinstieg</div>
           <div class="spoken-item"><div class="spoken-num">1</div><div><div class="spoken-text">„Guten Tag, mein Name ist [Name] von EnergyEngel, dem unabhängigen Makler für erneuerbare Energie. Ich rufe an, um einen Termin mit Ihnen zu vereinbaren – haben Sie 5 Minuten für mich?“</div></div></div>
@@ -1555,11 +1623,19 @@
           <div class="response-actions hidden second-response-actions"><button class="btn-primary second-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary second-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
         </div>
 
-        <div class="spoken-block" id="spoken-sg">
-          <div class="spoken-label">Strom &amp; Gas · Gesprächseinstieg</div>
+        <div class="spoken-block" id="spoken-sv">
+          <div class="spoken-label">Stromvergleich · Gesprächseinstieg</div>
           <div class="spoken-item"><div class="spoken-num">1</div><div><div class="spoken-text">„Guten Tag, mein Name ist [Name] von EnergyEngel, dem unabhängigen Makler für erneuerbare Energie. Ich rufe an, um einen Termin mit Ihnen zu vereinbaren – haben Sie 5 Minuten für mich?“</div></div></div>
           <div class="response-actions"><button class="btn-primary first-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary first-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
-          <div class="spoken-item hidden"><div class="spoken-num">2</div><div><div class="spoken-text">„Wir schauen unabhängig, wie Ihre aktuelle Tarif- und Energiesituation aussieht und was für Sie wirtschaftlich Sinn macht.“</div></div></div>
+          <div class="spoken-item hidden"><div class="spoken-num">2</div><div><div class="spoken-text">„Wir prüfen unabhängig, was Sie aktuell für Ihren Strom zahlen und ob es bessere Tarife für Ihre Situation gibt – und das ganz ohne, dass Sie selber vergleichen müssen.“</div></div></div>
+          <div class="response-actions hidden second-response-actions"><button class="btn-primary second-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary second-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
+        </div>
+
+        <div class="spoken-block" id="spoken-gv">
+          <div class="spoken-label">Gasvergleich · Gesprächseinstieg</div>
+          <div class="spoken-item"><div class="spoken-num">1</div><div><div class="spoken-text">„Guten Tag, mein Name ist [Name] von EnergyEngel, dem unabhängigen Makler für erneuerbare Energie. Ich rufe an, um einen Termin mit Ihnen zu vereinbaren – haben Sie 5 Minuten für mich?“</div></div></div>
+          <div class="response-actions"><button class="btn-primary first-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary first-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
+          <div class="spoken-item hidden"><div class="spoken-num">2</div><div><div class="spoken-text">„Wir prüfen unabhängig, was Sie aktuell für Ihr Gas zahlen und ob ein Wechsel für Sie spürbar Geld spart – ohne dass Sie selber Tarife durchforsten müssen.“</div></div></div>
           <div class="response-actions hidden second-response-actions"><button class="btn-primary second-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary second-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
         </div>
 
@@ -1961,6 +2037,7 @@
       mode: 'prep',
       pfad: null,
       thema: null,
+      secondaryThemen: new Set(),
       currentStep: 0,
       tags: new Set(),
       motive: new Set(),
@@ -2007,11 +2084,18 @@
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Photovoltaik-Situation bei uns am Ende gesagt haben.“',
         defaultObjection: 'pv'
       },
-      sg: {
-        step1Goal: 'Du eröffnest das Gespräch klar auf Strom & Gas und führst dann direkt in die Bedarfsermittlung.',
-        openingQuestion: '„Kurz gefragt: Wie kommen Sie gerade zu dem Thema Strom & Gas?“',
-        step3Sub: 'Nur passende Kosten- und Nutzenargumente zeigen.',
-        interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Strom-&-Gas-Situation bei uns am Ende gesagt haben.“',
+      sv: {
+        step1Goal: 'Du eröffnest das Gespräch klar auf den Stromvergleich und führst direkt in die Tarif- und Verbrauchsfragen.',
+        openingQuestion: '„Kurz gefragt: Was zahlen Sie aktuell für Strom – und sind Sie damit zufrieden?“',
+        step3Sub: 'Nur Argumente zeigen, die zu Tarifoptimierung und Anbieterwechsel passen.',
+        interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Strom-Tarif-Situation bei uns am Ende gesagt haben.“',
+        defaultObjection: 'allg'
+      },
+      gv: {
+        step1Goal: 'Du eröffnest das Gespräch klar auf den Gasvergleich und führst direkt in die Tarif- und Verbrauchsfragen.',
+        openingQuestion: '„Kurz gefragt: Was zahlen Sie aktuell für Gas – und sind Sie damit zufrieden?“',
+        step3Sub: 'Nur Argumente zeigen, die zu Tarifoptimierung und Anbieterwechsel beim Gas passen.',
+        interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Gas-Tarif-Situation bei uns am Ende gesagt haben.“',
         defaultObjection: 'allg'
       },
       empfehlung: {
@@ -2032,12 +2116,24 @@
 
     function valueOrDash(v) { return String(v || '').trim() || '—'; }
     function getPfadLabel() { return state.pfad === 'lead' ? 'Warmer Lead' : state.pfad === 'empfehlung' ? 'Empfehlung' : '—'; }
+    const themaLabels = {
+      wp: 'Wärmepumpe',
+      pv: 'Photovoltaik',
+      sv: 'Stromvergleich',
+      gv: 'Gasvergleich'
+    };
+    const secondaryHints = {
+      wp: 'Beim Heizungsthema kannst du fragen, wie alt die aktuelle Heizung ist – Wärmepumpe ist oft für später ein Thema.',
+      pv: 'Falls Dach geeignet sein könnte: kurz erwähnen, dass eine PV-Anlage langfristig die Stromkosten deckelt.',
+      sv: 'Bei laufendem Stromvertrag: kurz fragen, was er aktuell zahlt – Tarifvergleich kostet nichts und spart oft 200–400 € im Jahr.',
+      gv: 'Bei laufendem Gasvertrag: kurz fragen, was er pro kWh zahlt – ein Vergleich ist schnell gemacht und lohnt sich meist.'
+    };
     function getThemaLabel() {
-      if (state.thema === 'wp') return 'Wärmepumpe';
-      if (state.thema === 'pv') return 'Photovoltaik';
-      if (state.thema === 'sg') return 'Strom & Gas';
       if (state.pfad === 'empfehlung') return 'Empfehlungsfall / offen';
-      return '—';
+      const main = themaLabels[state.thema];
+      if (!main) return '—';
+      const secondary = Array.from(state.secondaryThemen).map((k) => themaLabels[k]).filter(Boolean);
+      return secondary.length ? `${main} (auch: ${secondary.join(', ')})` : main;
     }
     function currentGuide() {
       if (state.pfad === 'empfehlung') return guideText.empfehlung;
@@ -2461,10 +2557,29 @@
       if ($('step3Sub')) $('step3Sub').textContent = cfg.step3Sub;
       updateSayBoxText($('interestIntro'), cfg.interestIntro);
       showSpoken();
+      renderSecondaryTopics();
       resetTechnicalCheck();
       setTechnicalQuestion('building', false);
       updateMotiveFollowup();
       showObjectionGroup(cfg.defaultObjection);
+    }
+
+    function renderSecondaryTopics() {
+      const card = $('secondaryTopicsCard');
+      const list = $('secondaryTopicsList');
+      if (!card || !list) return;
+      const topics = Array.from(state.secondaryThemen);
+      if (!topics.length) {
+        card.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+      list.innerHTML = topics.map((key) => {
+        const label = themaLabels[key] || key;
+        const hint = secondaryHints[key] || '';
+        return `<div class="secondary-topic-item"><div class="secondary-topic-label">${label}</div><div class="secondary-topic-text">${hint}</div></div>`;
+      }).join('');
+      card.classList.remove('hidden');
     }
 
     function resetSpokenProgress() {
@@ -2547,10 +2662,11 @@
     function setPfad(pfad) {
       state.pfad = pfad;
       state.thema = null;
+      state.secondaryThemen.clear();
       $('pfad-lead').classList.remove('active');
       $('pfad-empfehlung').classList.remove('active');
       $('pfad-' + pfad).classList.add('active');
-      $$('.topic-btn').forEach((btn) => btn.classList.remove('active'));
+      resetTopicButtonStyling();
       if (pfad === 'lead') {
         $('themeCard').style.display = 'block';
         requestAnimationFrame(() => scrollPrepTarget($('themeCard')));
@@ -2560,16 +2676,61 @@
         startGuide();
         return;
       }
+      updateStartButtonState();
       updateSummary();
       updateStageLocks();
     }
 
-    function setTopic(topic) {
-      state.thema = topic;
-      $$('.topic-btn').forEach((btn) => btn.classList.remove('active'));
-      $('topic-' + topic).classList.add('active');
+    function resetTopicButtonStyling() {
+      $$('.topic-btn').forEach((btn) => {
+        btn.classList.remove('active', 'primary-topic', 'secondary-topic');
+        const tag = btn.querySelector('.topic-tag');
+        if (tag) tag.textContent = 'Thema wählen';
+      });
+    }
+
+    function refreshTopicButtonStyling() {
+      $$('.topic-btn').forEach((btn) => {
+        const topic = btn.dataset.topic;
+        btn.classList.remove('active', 'primary-topic', 'secondary-topic');
+        const tag = btn.querySelector('.topic-tag');
+        if (topic === state.thema) {
+          btn.classList.add('primary-topic');
+          if (tag) tag.textContent = '★ Haupt-Thema';
+        } else if (state.secondaryThemen.has(topic)) {
+          btn.classList.add('secondary-topic');
+          if (tag) tag.textContent = '+ auch ansprechen';
+        } else {
+          if (tag) tag.textContent = 'Thema wählen';
+        }
+      });
+    }
+
+    function updateStartButtonState() {
+      const btn = $('startGuideBtn');
+      if (!btn) return;
+      btn.disabled = !state.thema;
+    }
+
+    function toggleTopic(topic) {
+      if (state.thema === topic) {
+        const next = state.secondaryThemen.values().next().value || null;
+        if (next) {
+          state.secondaryThemen.delete(next);
+          state.thema = next;
+        } else {
+          state.thema = null;
+        }
+      } else if (state.secondaryThemen.has(topic)) {
+        state.secondaryThemen.delete(topic);
+      } else if (!state.thema) {
+        state.thema = topic;
+      } else {
+        state.secondaryThemen.add(topic);
+      }
+      refreshTopicButtonStyling();
+      updateStartButtonState();
       updateSummary();
-      startGuide();
     }
 
     function startGuide() {
@@ -3358,17 +3519,25 @@
       setVal('kunde-ort', addressParts.join(', '));
 
       const themaMap = {
-        pv: 'pv', photovoltaik: 'pv',
-        wp: 'wp', waermepumpe: 'wp', 'wärmepumpe': 'wp',
-        sg: 'sg', strom: 'sg', gas: 'sg', stromvertrag: 'sg', gasvertrag: 'sg',
-        'strom&gas': 'sg', 'strom & gas': 'sg',
-        bat: 'pv', batterie: 'pv', batteriespeicher: 'pv'
+        pv: ['pv'], photovoltaik: ['pv'],
+        wp: ['wp'], waermepumpe: ['wp'], 'wärmepumpe': ['wp'],
+        sv: ['sv'], strom: ['sv'], stromvertrag: ['sv'], stromvergleich: ['sv'],
+        gv: ['gv'], gas: ['gv'], gasvertrag: ['gv'], gasvergleich: ['gv'],
+        sg: ['sv', 'gv'], 'strom&gas': ['sv', 'gv'], 'strom & gas': ['sv', 'gv'],
+        bat: ['pv'], batterie: ['pv'], batteriespeicher: ['pv']
       };
       const themaTokens = themenRaw
         .split(/[,;|]/)
         .map((t) => t.trim().toLowerCase())
         .filter(Boolean);
-      const primaryThema = themaTokens.map((t) => themaMap[t]).find(Boolean) || null;
+      const mappedSet = new Set();
+      themaTokens.forEach((t) => {
+        const mapped = themaMap[t];
+        if (mapped) mapped.forEach((m) => mappedSet.add(m));
+      });
+      const mappedThemen = Array.from(mappedSet);
+      const primaryThema = mappedThemen[0] || null;
+      const secondaryPrefill = mappedThemen.slice(1);
 
       const noteLines = [];
       if (tippgeber) noteLines.push('Empfehlung von: ' + tippgeber);
@@ -3395,14 +3564,19 @@
         $('pfad-empfehlung')?.classList.add('prefill-suggested');
       } else if (primaryThema) {
         $('pfad-lead')?.classList.add('prefill-suggested');
-        $('topic-' + primaryThema)?.classList.add('prefill-suggested');
+        state.thema = primaryThema;
+        secondaryPrefill.forEach((t) => state.secondaryThemen.add(t));
+        refreshTopicButtonStyling();
+        updateStartButtonState();
+        $('startGuideBtn')?.classList.add('prefill-suggested');
       }
     }
 
     function bind() {
       $('pfad-lead').addEventListener('click', () => setPfad('lead'));
       $('pfad-empfehlung').addEventListener('click', () => setPfad('empfehlung'));
-      $$('.topic-btn').forEach((btn) => btn.addEventListener('click', () => setTopic(btn.dataset.topic)));
+      $$('.topic-btn').forEach((btn) => btn.addEventListener('click', () => toggleTopic(btn.dataset.topic)));
+      $('startGuideBtn')?.addEventListener('click', () => startGuide());
 
       $('backBtn').addEventListener('click', () => {
         if (state.currentStep === 1) {
