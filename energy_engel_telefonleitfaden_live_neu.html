@@ -2568,12 +2568,34 @@
       const card = $('secondaryTopicsCard');
       const list = $('secondaryTopicsList');
       if (!card || !list) return;
-      const topics = Array.from(state.secondaryThemen);
+      const badge = card.querySelector('.badge');
+      const title = card.querySelector('.card-title');
+      const help = card.querySelector('.card-help');
+
+      let topics, badgeText, titleText, helpText;
+      if (state.pfad === 'empfehlung') {
+        const all = state.thema ? [state.thema, ...Array.from(state.secondaryThemen)] : Array.from(state.secondaryThemen);
+        topics = all;
+        badgeText = 'Themen-Interesse';
+        titleText = 'Vom Tippgeber gemeldete Themen';
+        helpText = 'So kommt der Kunde zu uns. Im Gespräch offen einsteigen, dann die genannten Themen aufgreifen.';
+      } else {
+        topics = Array.from(state.secondaryThemen);
+        badgeText = 'Auch ansprechen';
+        titleText = 'Neben dem Hauptthema kurz erwähnen';
+        helpText = 'Diese Themen hat der Kunde zusätzlich angegeben. Streu am Ende des Gesprächs 1–2 Sätze ein – nicht das Hauptthema verwässern.';
+      }
+
       if (!topics.length) {
         card.classList.add('hidden');
         list.innerHTML = '';
         return;
       }
+
+      if (badge) badge.textContent = badgeText;
+      if (title) title.textContent = titleText;
+      if (help) help.textContent = helpText;
+
       list.innerHTML = topics.map((key) => {
         const label = themaLabels[key] || key;
         const hint = secondaryHints[key] || '';
@@ -2659,17 +2681,22 @@
       window.scrollTo({ top: offset, behavior: 'smooth' });
     }
 
-    function setPfad(pfad) {
+    function setPfad(pfad, opts) {
+      opts = opts || {};
       state.pfad = pfad;
-      state.thema = null;
-      state.secondaryThemen.clear();
+      if (!opts.keepTopics) {
+        state.thema = null;
+        state.secondaryThemen.clear();
+        resetTopicButtonStyling();
+      } else {
+        refreshTopicButtonStyling();
+      }
       $('pfad-lead').classList.remove('active');
       $('pfad-empfehlung').classList.remove('active');
       $('pfad-' + pfad).classList.add('active');
-      resetTopicButtonStyling();
       if (pfad === 'lead') {
         $('themeCard').style.display = 'block';
-        requestAnimationFrame(() => scrollPrepTarget($('themeCard')));
+        if (!opts.suppressScroll) requestAnimationFrame(() => scrollPrepTarget($('themeCard')));
       } else {
         $('themeCard').style.display = 'none';
         updateSummary();
@@ -3561,14 +3588,15 @@
       }
 
       if (tippgeber) {
-        $('pfad-empfehlung')?.classList.add('prefill-suggested');
+        if (primaryThema) {
+          state.thema = primaryThema;
+          secondaryPrefill.forEach((t) => state.secondaryThemen.add(t));
+        }
+        setPfad('empfehlung', { keepTopics: true });
       } else if (primaryThema) {
-        $('pfad-lead')?.classList.add('prefill-suggested');
         state.thema = primaryThema;
         secondaryPrefill.forEach((t) => state.secondaryThemen.add(t));
-        refreshTopicButtonStyling();
-        updateStartButtonState();
-        $('startGuideBtn')?.classList.add('prefill-suggested');
+        setPfad('lead', { keepTopics: true, suppressScroll: true });
       }
     }
 
