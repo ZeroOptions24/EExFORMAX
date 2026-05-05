@@ -2526,6 +2526,7 @@
 
     function getTechnicalQuestionText(key) {
       if (key === 'heat') {
+        if (state.thema === 'gv') return '„Wie viel Gas verbrauchen Sie im Jahr?“';
         if (state.heatSource === 'oil') return '„Wie viel Öl verbrauchen Sie im Jahr?“';
         if (state.heatSource === 'gas') return '„Wie viel Gas verbrauchen Sie im Jahr?“';
         return '„Wie viel verbrauchen Sie im Jahr?“';
@@ -2536,9 +2537,23 @@
         pv: '„Nutzen Sie schon die Sonnen Energie ?“',
         building: '„Wann wurde Ihr Haus gebaut?“',
         size: '„Und wie viel Wohnfläche haben Sie?“',
-        power: '„Wie viel Strom verbrauchen Sie im Jahr?“'
+        power: '„Wie viel Strom verbrauchen Sie im Jahr?“',
+        roof: '„Wie ist Ihr Dach ausgerichtet – eher Süd, Ost/West oder Nord?“',
+        provider: '„Bei welchem Anbieter sind Sie aktuell?“'
       };
       return map[key] || map.default;
+    }
+
+    const themaTopicWord = {
+      wp: 'die Wärmepumpe',
+      pv: 'eine PV-Anlage',
+      sv: 'einen Tarifwechsel beim Strom',
+      gv: 'einen Tarifwechsel beim Gas'
+    };
+
+    function getFirstVisibleTechQuestion() {
+      const visible = techQuestionsPerThema[state.thema] || techQuestionsPerThema.wp;
+      return visible[0] || 'heatSelect';
     }
 
     function isTechnicalStepComplete(key) {
@@ -3028,7 +3043,7 @@
       updateStageLocks();
       if (answer === 'yes') {
         lockTechnicalQuestion(5000);
-        setTechnicalQuestion('heatSelect', true, true);
+        setTechnicalQuestion(getFirstVisibleTechQuestion(), true, true);
         showStep(3);
       }
     }
@@ -3050,7 +3065,8 @@
           ? state.lastMotive
           : Array.from(state.motive)[0];
         const motiveText = motiveQuestionLabels[activeKey] || 'dieser Punkt für Sie wichtig ist';
-        updateSayBoxText(opening, `„Ich verstehe, dass ${motiveText}. Gibt es denn weitere Gründe, die für die Wärmepumpe bei Ihnen sprechen?“`);
+        const topicWord = themaTopicWord[state.thema] || 'das Thema';
+        updateSayBoxText(opening, `„Ich verstehe, dass ${motiveText}. Gibt es denn weitere Gründe, die für ${topicWord} bei Ihnen sprechen?“`);
       } else {
         updateSayBoxText(opening, currentGuide().openingQuestion);
       }
