@@ -605,6 +605,9 @@
       color: var(--script-text);
       letter-spacing: -0.01em;
       position: relative;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
     }
     .quote-box::before {
       content: 'Sagen';
@@ -2089,6 +2092,7 @@
         openingQuestion: '„Kurz gefragt: Wie kommen Sie gerade zu dem Thema Wärmepumpe?“',
         step3Sub: 'Nur Wärmepumpen-Argumente zeigen, die zur Situation des Kunden passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Wärmepumpen-Situation bei uns am Ende gesagt haben.“',
+        economicIntro: '„Wir erstellen für unsere Kunden eine Wirtschaftlichkeitsberechnung. Verraten Sie mir, was Sie momentan für Ihre Heizung im Jahr bezahlen?“',
         defaultObjection: 'wp'
       },
       pv: {
@@ -2096,6 +2100,7 @@
         openingQuestion: '„Kurz gefragt: Wie kommen Sie gerade zu dem Thema Photovoltaik?“',
         step3Sub: 'Nur Photovoltaik-Argumente zeigen, die zur Situation des Kunden passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Photovoltaik-Situation bei uns am Ende gesagt haben.“',
+        economicIntro: '„Damit ich Ihnen die Wirtschaftlichkeit sauber zeigen kann – was zahlen Sie aktuell pro Kilowattstunde Strom, und wie hoch ist Ihr Jahresverbrauch ungefähr?“',
         defaultObjection: 'pv'
       },
       sv: {
@@ -2103,6 +2108,7 @@
         openingQuestion: '„Kurz gefragt: Was zahlen Sie aktuell für Strom – und sind Sie damit zufrieden?“',
         step3Sub: 'Nur Argumente zeigen, die zu Tarifoptimierung und Anbieterwechsel passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Strom-Tarif-Situation bei uns am Ende gesagt haben.“',
+        economicIntro: '„Für einen sauberen Tarifvergleich brauche ich kurz: Was zahlen Sie aktuell pro Kilowattstunde, und wie hoch ist Ihr Jahresverbrauch?“',
         defaultObjection: 'allg'
       },
       gv: {
@@ -2110,6 +2116,7 @@
         openingQuestion: '„Kurz gefragt: Was zahlen Sie aktuell für Gas – und sind Sie damit zufrieden?“',
         step3Sub: 'Nur Argumente zeigen, die zu Tarifoptimierung und Anbieterwechsel beim Gas passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Gas-Tarif-Situation bei uns am Ende gesagt haben.“',
+        economicIntro: '„Für einen sauberen Tarifvergleich brauche ich kurz: Was zahlen Sie aktuell pro Kilowattstunde Gas, und wie viel verbrauchen Sie im Jahr?“',
         defaultObjection: 'allg'
       },
       empfehlung: {
@@ -2117,6 +2124,7 @@
         openingQuestion: '„Kurz gefragt: Was war für Sie der Anlass, dass wir heute miteinander sprechen?“',
         step3Sub: 'Nur die Argumente zeigen, die zur Situation des empfohlenen Kontakts passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Situation bei uns am Ende gesagt haben.“',
+        economicIntro: '„Wir erstellen für unsere Kunden eine kurze Wirtschaftlichkeits-Einschätzung. Verraten Sie mir kurz, was Sie aktuell für Ihre Energie zahlen?“',
         defaultObjection: 'allg'
       }
     };
@@ -2570,6 +2578,7 @@
       $('openingQuestion').classList.remove('hidden');
       if ($('step3Sub')) $('step3Sub').textContent = cfg.step3Sub;
       updateSayBoxText($('interestIntro'), cfg.interestIntro);
+      if (cfg.economicIntro) updateSayBoxText($('economicIntro'), cfg.economicIntro);
       showSpoken();
       renderSecondaryTopics();
       renderMotives();
