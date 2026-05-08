@@ -5154,10 +5154,17 @@
         },
 
         // ── Termin ──
+        // Hauptscheduler: terminDatum / terminUhrzeit (camelCase, immer sichtbar)
+        // Pipedrive-Card: termin-datum / termin-uhrzeit (kebab-case, nur mit dealId-URL)
+        // Beide auslesen — was nicht leer ist gewinnt.
         termin: {
-          datum:   document.getElementById('termin-datum')?.value || '',
-          uhrzeit: document.getElementById('termin-uhrzeit')?.value || '',
-          ort:     document.getElementById('termin-ort')?.value?.trim() || '',
+          datum:   (document.getElementById('terminDatum')?.value
+                    || document.getElementById('termin-datum')?.value
+                    || ''),
+          uhrzeit: (document.getElementById('terminUhrzeit')?.value
+                    || document.getElementById('termin-uhrzeit')?.value
+                    || ''),
+          ort:     (document.getElementById('termin-ort')?.value?.trim() || ''),
           text:    state.kundenDaten?.termin || ''
         },
 
