@@ -964,11 +964,42 @@
 </footer>
 
 <script>
+  // ── Webhook URL ─────────────────────────────────────────────
+  // Diese URL wird vom n8n Webhook-Node bereitgestellt.
+  // Test-URL: …/webhook-test/formaxx-tippgeber
+  // Produktiv:  …/webhook/formaxx-tippgeber
+  const WEBHOOK_URL = 'https://n8n.deine-domain.de/webhook/formaxx-tippgeber';
+  // ────────────────────────────────────────────────────────────
+
   const form = document.getElementById('tippgeberForm');
   const progressFill = document.getElementById('progressFill');
   const submitBtn = document.getElementById('submitBtn');
 
   const REQUIRED_FIELDS = ['q1', 'q2', 'q3', 'q4', 'vorname', 'name', 'kontakt'];
+
+  const Q1_LABELS = {
+    'weniger-12': 'Vor weniger als 12 Monaten',
+    '1-3-jahre':  'Vor 1 – 3 Jahren',
+    'ueber-3':    'Vor über 3 Jahren',
+    'noch-nie':   'Noch nie'
+  };
+  const Q2_LABELS = {
+    'aktuell':      'Aktuell / dieses Jahr',
+    'vor-1-3':      'Vor 1 – 3 Jahren',
+    'laenger':      'Schon länger her',
+    'bisher-nicht': 'Bisher gar nicht'
+  };
+  const Q3_LABELS = {
+    'ja':         'Ja, sehr gerne',
+    'vielleicht': 'Vielleicht – mehr Infos bitte',
+    'nein':       'Nein, danke'
+  };
+  const Q4_LABELS = {
+    'ich-selbst':     'Ja, für mich selbst',
+    'empfehlung':     'Ja, ich kenne jemanden',
+    'info':           'Erstmal nur Infos',
+    'kein-interesse': 'Kein Interesse'
+  };
 
   function updateProgress() {
     let filled = 0;
@@ -1000,7 +1031,70 @@
     });
   });
 
-  form.addEventListener('submit', (e) => {
+  function detectKontaktTyp(value) {
+    const v = (value || '').trim();
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'email';
+    if (/^[+\d][\d\s\-()/]{5,}$/.test(v))      return 'phone';
+    return 'unknown';
+  }
+
+  function buildPayload() {
+    const get = name => (form.elements[name].value || '').trim();
+    const radio = name => {
+      const el = form.elements[name];
+      return [...el].find(r => r.checked)?.value || null;
+    };
+    const q1 = radio('q1');
+    const q2 = radio('q2');
+    const q3 = radio('q3');
+    const q4 = radio('q4');
+    const kontakt    = get('kontakt');
+    const kontaktTyp = detectKontaktTyp(kontakt);
+
+    return {
+      source:       'formaxx-tippgeber-formular',
+      submitted_at: new Date().toISOString(),
+      page_url:     window.location.href,
+      vorname:      get('vorname'),
+      name:         get('name'),
+      kontakt:      kontakt,
+      kontakt_typ:  kontaktTyp,
+      email:        kontaktTyp === 'email' ? kontakt : null,
+      telefon:      kontaktTyp === 'phone' ? kontakt : null,
+      antworten: {
+        versicherungscheck:  { value: q1, label: Q1_LABELS[q1] || null },
+        geldanlage:          { value: q2, label: Q2_LABELS[q2] || null },
+        gutschein_interesse: { value: q3, label: Q3_LABELS[q3] || null },
+        zweiteinkommen:      { value: q4, label: Q4_LABELS[q4] || null }
+      },
+      lead_score: (q3 === 'ja' ? 50 : q3 === 'vielleicht' ? 25 : 0)
+                + (q4 === 'ich-selbst' || q4 === 'empfehlung' ? 25 : 0)
+                + (q1 === 'noch-nie' || q1 === 'ueber-3' ? 15 : 0)
+    };
+  }
+
+  async function sendToWebhook(payload) {
+    const res = await fetch(WEBHOOK_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Webhook returned ' + res.status);
+    return res;
+  }
+
+  function showError(message) {
+    let banner = document.getElementById('submitErrorBanner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'submitErrorBanner';
+      banner.style.cssText = 'margin-top:12px;padding:12px 16px;background:#fff5f5;border:1px solid #f5c6c6;border-left:4px solid var(--red);border-radius:6px;color:var(--red-dark);font-size:0.88rem;max-width:480px;text-align:center;';
+      document.querySelector('.submit-area').appendChild(banner);
+    }
+    banner.textContent = message;
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     let firstError = null;
     let valid = true;
@@ -1032,17 +1126,25 @@
       return;
     }
 
+    const oldBanner = document.getElementById('submitErrorBanner');
+    if (oldBanner) oldBanner.remove();
+
     submitBtn.disabled = true;
     submitBtn.querySelector('span').textContent = 'Wird übermittelt …';
 
-    setTimeout(() => {
+    try {
+      await sendToWebhook(buildPayload());
       document.getElementById('successOverlay').classList.add('show');
-      submitBtn.disabled = false;
-      submitBtn.querySelector('span').textContent = 'Jetzt absenden & Gutschein sichern';
       form.reset();
       progressFill.style.width = '0%';
       document.querySelectorAll('.question.answered').forEach(q => q.classList.remove('answered'));
-    }, 800);
+    } catch (err) {
+      console.error('Webhook-Fehler:', err);
+      showError('Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').textContent = 'Jetzt absenden & Gutschein sichern';
+    }
   });
 
   document.getElementById('successClose').addEventListener('click', () => {
