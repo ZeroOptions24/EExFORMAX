@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formaxx AG – Finanzgenie gesucht | Tippgeber-Formular</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-deep:    #0f1838;
+    --navy:         #1e294d;
+    --navy-mid:     #2a3a6b;
+    --navy-light:   #3f5494;
+    --blue-accent:  #2a5db3;
+    --red:          #d8232a;
+    --red-dark:     #b81b22;
+    --gold:         #c9a45c;
+    --bg:           #f4f6fb;
+    --bg-soft:      #eef1f8;
+    --white:        #ffffff;
+    --text:         #1a1f33;
+    --text-soft:    #4a5574;
+    --text-muted:   #8893ad;
+    --border:       #dde3ef;
+    --border-soft:  #e9edf5;
+    --radius:       6px;
+    --radius-lg:    10px;
+    --shadow-sm:    0 1px 2px rgba(15,24,56,0.06), 0 1px 3px rgba(15,24,56,0.04);
+    --shadow-md:    0 4px 14px rgba(15,24,56,0.08), 0 2px 4px rgba(15,24,56,0.04);
+    --shadow-lg:    0 12px 36px rgba(15,24,56,0.12), 0 4px 12px rgba(15,24,56,0.06);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 1px 0 rgba(15,24,56,0.04);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-mark {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+    line-height: 1;
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .logo-suffix {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.04em;
+    margin-left: 4px;
+  }
+
+  .logo-mark::after {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--red);
+    margin-left: 4px;
+    transform: translateY(-1px);
+    border-radius: 1px;
+  }
+
+  .logo-tagline {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-left: 1px solid var(--border);
+    padding-left: 12px;
+    margin-left: 4px;
+    line-height: 1.3;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+  }
+
+  .header-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 500;
+  }
+
+  .header-meta-item svg { color: var(--blue-accent); flex-shrink: 0; }
+
+  @media (max-width: 720px) {
+    header { padding: 0 18px; height: 64px; }
+    .logo-tagline { display: none; }
+    .header-meta { gap: 12px; font-size: 0.75rem; }
+    .header-meta-item span:not(.always) { display: none; }
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background:
+      radial-gradient(circle at 88% 18%, rgba(42,93,179,0.18) 0%, transparent 55%),
+      radial-gradient(circle at 12% 92%, rgba(216,35,42,0.12) 0%, transparent 50%),
+      linear-gradient(135deg, #0f1838 0%, #1e294d 50%, #2a3a6b 100%);
+    color: var(--white);
+    padding: 72px 24px 96px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    padding: 6px 16px 6px 12px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    margin-bottom: 24px;
+  }
+
+  .hero-eyebrow .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 0 4px rgba(216,35,42,0.25);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(216,35,42,0.25); }
+    50%      { box-shadow: 0 0 0 8px rgba(216,35,42,0.05); }
+  }
+
+  .hero h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(2rem, 5.2vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    margin-bottom: 18px;
+  }
+
+  .hero h1 .accent {
+    background: linear-gradient(120deg, #ffd58a 0%, #c9a45c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    color: rgba(255,255,255,0.75);
+    max-width: 580px;
+    margin: 0 auto 32px;
+    line-height: 1.65;
+  }
+
+  .hero-trust {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.78);
+    font-weight: 500;
+  }
+
+  .trust-item svg {
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* ── Form section ── */
+  .form-section {
+    margin-top: -56px;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .form-card {
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border-soft);
+    position: relative;
+  }
+
+  .progress-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue-accent), var(--navy-light));
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .form-intro {
+    padding: 36px 48px 24px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .form-intro-label {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 10px;
+  }
+
+  .form-intro h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .form-intro p {
+    margin-top: 10px;
+    color: var(--text-soft);
+    font-size: 0.98rem;
+  }
+
+  .form-body {
+    padding: 12px 48px 8px;
+  }
+
+  @media (max-width: 640px) {
+    .form-intro { padding: 28px 22px 20px; }
+    .form-body { padding: 8px 22px 4px; }
+  }
+
+  /* ── Question ── */
+  .question {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border-soft);
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .question:last-of-type { border-bottom: none; }
+
+  .question-num {
+    width: 36px;
+    height: 36px;
+    background: var(--bg-soft);
+    color: var(--navy);
+    border-radius: 50%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: background 0.25s, color 0.25s;
+  }
+
+  .question.answered .question-num {
+    background: var(--navy);
+    color: var(--white);
+  }
+
+  .question-content { min-width: 0; }
+
+  .question-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.04rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.45;
+    margin-bottom: 14px;
+    letter-spacing: -0.005em;
+  }
+
+  .question-help {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+
+  /* ── Inputs ── */
+  .input,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.96rem;
+    color: var(--text);
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  }
+
+  .input:hover, textarea:hover { border-color: #c5cee0; }
+
+  .input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue-accent);
+    box-shadow: 0 0 0 3px rgba(42,93,179,0.13);
+    background: var(--white);
+  }
+
+  textarea { resize: vertical; min-height: 78px; line-height: 1.55; }
+
+  .input.error,
+  textarea.error {
+    border-color: var(--red) !important;
+    background: #fff7f7;
+  }
+
+  /* ── Choice options ── */
+  .choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .choice {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .choice input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .choice-inner {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.93rem;
+    font-weight: 500;
+    color: var(--text-soft);
+    transition: all 0.18s ease;
+  }
+
+  .choice:hover .choice-inner {
+    border-color: var(--navy-light);
+    color: var(--text);
+  }
+
+  .choice-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.18s ease;
+  }
+
+  .choice-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--white);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.18s ease;
+  }
+
+  .choice input:checked + .choice-inner {
+    border-color: var(--navy);
+    background: linear-gradient(180deg, #f6f8fc, #eef1f8);
+    color: var(--navy);
+    font-weight: 600;
+    box-shadow: 0 0 0 1px var(--navy) inset;
+  }
+
+  .choice input:checked + .choice-inner .choice-radio {
+    border-color: var(--navy);
+    background: var(--navy);
+  }
+
+  .choice input:checked + .choice-inner .choice-radio::after {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  /* Highlighted "yes" choice for the gutschein question */
+  .choice.choice-highlight input:checked + .choice-inner {
+    border-color: var(--red);
+    background: linear-gradient(180deg, #fff5f5, #ffe9ea);
+    color: var(--red-dark);
+    box-shadow: 0 0 0 1px var(--red) inset;
+  }
+
+  .choice.choice-highlight input:checked + .choice-inner .choice-radio {
+    border-color: var(--red);
+    background: var(--red);
+  }
+
+  /* ── Voucher highlight banner ── */
+  .voucher-banner {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #fff8e8 0%, #fdf0d2 100%);
+    border: 1px solid #efd99a;
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.88rem;
+    color: #6b4d12;
+  }
+
+  .voucher-amount {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #8a6614;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .voucher-amount small {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  /* ── Contact section ── */
+  .contact-section {
+    background: var(--bg-soft);
+    padding: 32px 48px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .contact-section { padding: 26px 22px 22px; }
+  }
+
+  .contact-section h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+
+  .contact-section .subtitle {
+    font-size: 0.88rem;
+    color: var(--text-soft);
+    margin-bottom: 18px;
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .field-grid .span-2 { grid-column: span 2; }
+
+  @media (max-width: 540px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .field-grid .span-2 { grid-column: span 1; }
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  .field-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .field-label .req { color: var(--red); font-weight: 700; }
+
+  /* ── Submit ── */
+  .submit-area {
+    padding: 24px 48px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    background: var(--bg-soft);
+  }
+
+  @media (max-width: 640px) { .submit-area { padding: 22px 22px 28px; } }
+
+  button[type="submit"] {
+    appearance: none;
+    border: none;
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 15px 36px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    width: 100%;
+    max-width: 360px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.15s, box-shadow 0.18s, filter 0.18s;
+    box-shadow: 0 4px 14px rgba(15,24,56,0.22), inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  button[type="submit"]:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(15,24,56,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+    filter: brightness(1.08);
+  }
+
+  button[type="submit"]:active { transform: translateY(0); }
+
+  button[type="submit"]:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+  }
+
+  button[type="submit"] .arrow {
+    transition: transform 0.2s ease;
+  }
+
+  button[type="submit"]:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  .submit-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+    max-width: 480px;
+    line-height: 1.55;
+  }
+
+  .submit-note a { color: var(--blue-accent); text-decoration: none; }
+  .submit-note a:hover { text-decoration: underline; }
+
+  /* ── Success state ── */
+  .success-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,24,56,0.6);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .success-overlay.show { display: flex; }
+
+  .success-modal {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 40px 36px 32px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #2a8a4f, #1e6b3e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 22px rgba(42,138,79,0.32);
+  }
+
+  .success-modal h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+
+  .success-modal p {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .success-close {
+    margin-top: 24px;
+    padding: 10px 24px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-soft);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .success-close:hover { background: var(--border-soft); color: var(--text); }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--navy-deep);
+    color: rgba(255,255,255,0.6);
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 0.82rem;
+  }
+
+  footer a {
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    margin: 0 10px;
+  }
+
+  footer a:hover { color: var(--white); }
+
+  .footer-divider { color: rgba(255,255,255,0.25); }
+
+  @media (max-width: 480px) {
+    .question { grid-template-columns: 36px 1fr; gap: 14px; }
+    .question-num { width: 30px; height: 30px; font-size: 0.78rem; }
+    .question-label { font-size: 0.98rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="#" class="logo">
+    <span class="logo-mark">Formaxx<span class="logo-suffix">&nbsp;AG</span></span>
+    <span class="logo-tagline">Maßstab in<br>Finanzberatung</span>
+  </a>
+  <div class="header-meta">
+    <div class="header-meta-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2C20 17.5 12 22 12 22z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+      <span>Bundesweit für Sie da</span>
+    </div>
+    <div class="header-meta-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <span class="always">SSL gesichert</span>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <span class="dot"></span>
+      Tippgeber-Aktion
+    </div>
+    <h1>Finanzgenie <span class="accent">gesucht</span></h1>
+    <p>Beantworten Sie vier kurze Fragen und sichern Sie sich einen <strong style="color:#fff;">119 € Gutschein</strong> für einen umfangreichen Check Ihrer Versicherungen und Geldanlagen.</p>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Über 30 Jahre Erfahrung
+      </div>
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+        FAZ-ausgezeichnet
+      </div>
+      <div class="trust-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Persönliche Beratung
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="form-section">
+  <form class="form-card" id="tippgeberForm" novalidate>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="form-intro">
+      <span class="form-intro-label">Tippgeber-Formular</span>
+      <h2>Vier Fragen – Ihr Weg zum 119 € Gutschein</h2>
+      <p>Ihre Antworten helfen uns, Ihnen und Ihren Empfehlungen passgenau zu begegnen. Selbstverständlich vertraulich.</p>
+    </div>
+
+    <div class="form-body">
+
+      <div class="question" data-q="1">
+        <div class="question-num">1</div>
+        <div class="question-content">
+          <div class="question-label">Wann hatten Sie Ihren letzten Versicherungscheck?</div>
+          <div class="choices">
+            <label class="choice">
+              <input type="radio" name="q1" value="weniger-12">
+              <div class="choice-inner"><span class="choice-radio"></span>Vor weniger als 12 Monaten</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q1" value="1-3-jahre">
+              <div class="choice-inner"><span class="choice-radio"></span>Vor 1 – 3 Jahren</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q1" value="ueber-3">
+              <div class="choice-inner"><span class="choice-radio"></span>Vor über 3 Jahren</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q1" value="noch-nie">
+              <div class="choice-inner"><span class="choice-radio"></span>Noch nie</div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="question" data-q="2">
+        <div class="question-num">2</div>
+        <div class="question-content">
+          <div class="question-label">Wann haben Sie das letzte Mal über kluge Geldanlage nachgedacht und gehandelt?</div>
+          <div class="choices">
+            <label class="choice">
+              <input type="radio" name="q2" value="aktuell">
+              <div class="choice-inner"><span class="choice-radio"></span>Aktuell / dieses Jahr</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q2" value="vor-1-3">
+              <div class="choice-inner"><span class="choice-radio"></span>Vor 1 – 3 Jahren</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q2" value="laenger">
+              <div class="choice-inner"><span class="choice-radio"></span>Schon länger her</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q2" value="bisher-nicht">
+              <div class="choice-inner"><span class="choice-radio"></span>Bisher gar nicht</div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="question" data-q="3">
+        <div class="question-num">3</div>
+        <div class="question-content">
+          <div class="question-label">Sind Sie an einem Gutschein über 119 € für einen umfangreichen Check Ihrer Versicherungen und Geldanlagen interessiert?</div>
+          <div class="choices">
+            <label class="choice choice-highlight">
+              <input type="radio" name="q3" value="ja">
+              <div class="choice-inner"><span class="choice-radio"></span>Ja, sehr gerne</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q3" value="vielleicht">
+              <div class="choice-inner"><span class="choice-radio"></span>Vielleicht – mehr Infos bitte</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q3" value="nein">
+              <div class="choice-inner"><span class="choice-radio"></span>Nein, danke</div>
+            </label>
+          </div>
+          <div class="voucher-banner">
+            <div class="voucher-amount">119<small>&nbsp;€</small></div>
+            <div>
+              <strong>Ihr Vorteil:</strong> Umfassender Check Ihrer Versicherungen &amp; Geldanlagen –
+              kostenfrei und unverbindlich, sobald Sie das Formular absenden.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="question" data-q="4">
+        <div class="question-num">4</div>
+        <div class="question-content">
+          <div class="question-label">Sind Sie an einem Zweiteinkommen in der Energie- oder Finanzbranche interessiert – oder kennen Sie jemanden?</div>
+          <div class="choices">
+            <label class="choice">
+              <input type="radio" name="q4" value="ich-selbst">
+              <div class="choice-inner"><span class="choice-radio"></span>Ja, für mich selbst</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q4" value="empfehlung">
+              <div class="choice-inner"><span class="choice-radio"></span>Ja, ich kenne jemanden</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q4" value="info">
+              <div class="choice-inner"><span class="choice-radio"></span>Erstmal nur Infos</div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="q4" value="kein-interesse">
+              <div class="choice-inner"><span class="choice-radio"></span>Kein Interesse</div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="contact-section">
+      <h3>Ihre Kontaktdaten</h3>
+      <p class="subtitle">Damit wir Ihnen den Gutschein und alle Infos zukommen lassen können.</p>
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label" for="vorname">Vorname <span class="req">*</span></label>
+          <input class="input" type="text" id="vorname" name="vorname" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="name">Name <span class="req">*</span></label>
+          <input class="input" type="text" id="name" name="name" autocomplete="family-name" required>
+        </div>
+        <div class="field span-2">
+          <label class="field-label" for="kontakt">Telefonnummer oder E-Mail-Adresse <span class="req">*</span></label>
+          <input class="input" type="text" id="kontakt" name="kontakt" placeholder="z. B. 0151 1234567 oder name@email.de" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-area">
+      <button type="submit" id="submitBtn">
+        <span>Jetzt absenden &amp; Gutschein sichern</span>
+        <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <p class="submit-note">
+        Mit dem Absenden bestätigen Sie unsere <a href="#">Datenschutzbestimmungen</a>.
+        Ihre Angaben werden vertraulich behandelt und ausschließlich für die Bearbeitung Ihrer Anfrage verwendet.
+      </p>
+    </div>
+  </form>
+</section>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-modal">
+    <div class="success-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Vielen Dank!</h3>
+    <p>Ihre Angaben wurden erfolgreich übermittelt. Wir melden uns innerhalb der nächsten 48 Stunden bei Ihnen, um den 119 € Gutschein einzulösen.</p>
+    <button class="success-close" id="successClose">Schließen</button>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 Formaxx AG</span>
+  <span class="footer-divider">·</span>
+  <a href="#">Impressum</a>
+  <span class="footer-divider">·</span>
+  <a href="#">Datenschutz</a>
+  <span class="footer-divider">·</span>
+  <a href="#">Kontakt</a>
+</footer>
+
+<script>
+  const form = document.getElementById('tippgeberForm');
+  const progressFill = document.getElementById('progressFill');
+  const submitBtn = document.getElementById('submitBtn');
+
+  const REQUIRED_FIELDS = ['q1', 'q2', 'q3', 'q4', 'vorname', 'name', 'kontakt'];
+
+  function updateProgress() {
+    let filled = 0;
+    REQUIRED_FIELDS.forEach(name => {
+      const el = form.elements[name];
+      if (!el) return;
+      if (el.length !== undefined && el[0] && el[0].type === 'radio') {
+        if ([...el].some(r => r.checked)) filled++;
+      } else if (el.value && el.value.trim()) {
+        filled++;
+      }
+    });
+    const pct = (filled / REQUIRED_FIELDS.length) * 100;
+    progressFill.style.width = pct + '%';
+  }
+
+  document.querySelectorAll('.question').forEach(q => {
+    q.addEventListener('change', () => {
+      const radios = q.querySelectorAll('input[type=radio]');
+      if ([...radios].some(r => r.checked)) q.classList.add('answered');
+      updateProgress();
+    });
+  });
+
+  form.querySelectorAll('input.input').forEach(input => {
+    input.addEventListener('input', () => {
+      input.classList.remove('error');
+      updateProgress();
+    });
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let firstError = null;
+    let valid = true;
+
+    ['q1', 'q2', 'q3', 'q4'].forEach(qName => {
+      const radios = form.elements[qName];
+      const checked = [...radios].some(r => r.checked);
+      const questionEl = document.querySelector(`.question[data-q="${qName.slice(1)}"]`);
+      if (!checked) {
+        valid = false;
+        if (!firstError) firstError = questionEl;
+        questionEl.querySelector('.question-num').style.background = 'var(--red)';
+        questionEl.querySelector('.question-num').style.color = 'var(--white)';
+      }
+    });
+
+    ['vorname', 'name', 'kontakt'].forEach(fieldName => {
+      const field = form.elements[fieldName];
+      if (!field.value.trim()) {
+        valid = false;
+        field.classList.add('error');
+        if (!firstError) firstError = field;
+      }
+    });
+
+    if (!valid) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (firstError.focus) setTimeout(() => firstError.focus(), 400);
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.querySelector('span').textContent = 'Wird übermittelt …';
+
+    setTimeout(() => {
+      document.getElementById('successOverlay').classList.add('show');
+      submitBtn.disabled = false;
+      submitBtn.querySelector('span').textContent = 'Jetzt absenden & Gutschein sichern';
+      form.reset();
+      progressFill.style.width = '0%';
+      document.querySelectorAll('.question.answered').forEach(q => q.classList.remove('answered'));
+    }, 800);
+  });
+
+  document.getElementById('successClose').addEventListener('click', () => {
+    document.getElementById('successOverlay').classList.remove('show');
+  });
+
+  document.getElementById('successOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'successOverlay') {
+      e.currentTarget.classList.remove('show');
+    }
+  });
+</script>
+
+</body>
+</html>
