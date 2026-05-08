@@ -419,65 +419,6 @@
       background: var(--brand-soft);
       box-shadow: 0 0 0 3px rgba(31,107,58,.10);
     }
-    .prefill-suggested:not(.active):not(.primary-topic):not(.secondary-topic) {
-      border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(31,107,58,.18);
-      animation: prefillPulse 1.8s ease-in-out infinite;
-    }
-    @keyframes prefillPulse {
-      0%, 100% { box-shadow: 0 0 0 3px rgba(31,107,58,.18); }
-      50%      { box-shadow: 0 0 0 6px rgba(31,107,58,.08); }
-    }
-    .topic-btn.primary-topic {
-      border-color: var(--brand);
-      background: var(--brand-soft);
-      box-shadow: 0 0 0 3px rgba(31,107,58,.18);
-    }
-    .topic-btn.primary-topic .topic-tag {
-      background: var(--brand);
-      color: #fff;
-      font-weight: 700;
-    }
-    .topic-btn.secondary-topic {
-      border-color: var(--brand);
-      border-style: dashed;
-      background: rgba(31,107,58,.04);
-    }
-    .topic-btn.secondary-topic .topic-tag {
-      background: rgba(31,107,58,.12);
-      color: var(--brand);
-    }
-    .secondary-topics-card {
-      border-left: 4px solid var(--brand);
-      background: rgba(31,107,58,.04);
-      margin-bottom: 16px;
-    }
-    .secondary-topics-card.hidden { display: none; }
-    .secondary-topic-item {
-      padding: 10px 12px;
-      margin-top: 8px;
-      border: 1px solid #d9e2dc;
-      border-radius: 8px;
-      background: #fff;
-    }
-    .secondary-topic-item:first-child { margin-top: 0; }
-    .secondary-topic-item .secondary-topic-label {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--brand);
-      margin-bottom: 4px;
-    }
-    .secondary-topic-item .secondary-topic-text {
-      font-size: 14px;
-      color: #1b1f1c;
-      line-height: 1.5;
-    }
-    #startGuideBtn[disabled] {
-      opacity: .45;
-      cursor: not-allowed;
-    }
     .choice-icon {
       width: 44px;
       height: 44px;
@@ -599,13 +540,14 @@
       border-radius: 18px;
       box-shadow: var(--script-shadow);
       padding: 24px 24px 22px;
-      font-size: 30px;
-      line-height: 1.5;
+      font-size: 28px;
+      line-height: 1.4;
       font-weight: 800;
       color: var(--script-text);
       letter-spacing: -0.01em;
       position: relative;
-      min-height: 220px;
+      /* Layout-Shift-Schutz: Box hat FESTE Höhe — unabhängig vom Text */
+      height: 180px;
       display: flex;
       align-items: center;
     }
@@ -643,16 +585,17 @@
     .followup-quote.visible { display: block; }
     .say-focus {
       box-shadow: 0 0 0 4px rgba(31,107,58,.14), var(--script-shadow) !important;
-      transform: scale(1.01);
-      transition: box-shadow .2s ease, transform .2s ease;
+      /* Kein transform:scale mehr — verursachte Layout-Shift auf Nachbar-Elementen */
+      transition: box-shadow .2s ease;
     }
     .say-change {
-      animation: sayPulse .38s ease;
+      /* Dezenter Farb-Flash statt Größen-Pulse */
+      animation: sayFlash .38s ease;
     }
-    @keyframes sayPulse {
-      0% { transform: scale(1); }
-      45% { transform: scale(1.04); }
-      100% { transform: scale(1); }
+    @keyframes sayFlash {
+      0% { background: var(--script-bg); }
+      45% { background: var(--script-bg-strong); }
+      100% { background: var(--script-bg); }
     }
 
     .say-stack {
@@ -729,12 +672,28 @@
       text-align: center;
       padding: 16px;
       z-index: 3;
-      font-size: 16px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 700;
       color: var(--text);
       background: transparent;
       border-radius: 14px;
       text-shadow: 0 1px 2px rgba(255,255,255,0.85);
+      cursor: pointer;
+      transition: background .18s ease;
+    }
+    .stage-lock.is-locked .lock-overlay::before {
+      content: '🔓  ';
+      font-size: 20px;
+      margin-right: 4px;
+    }
+    .stage-lock.is-locked .lock-overlay:hover {
+      background: rgba(31,107,58,0.08);
+    }
+    .stage-lock.is-locked .lock-overlay::after {
+      content: ' · Klicken zum Entsperren';
+      opacity: 0.7;
+      font-size: 13px;
+      font-weight: 600;
     }
     .section.is-locked {
       position: relative;
@@ -758,12 +717,27 @@
       padding: 24px;
       text-align: center;
       z-index: 4;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
       color: var(--text);
       background: transparent;
       text-shadow: 0 1px 2px rgba(255,255,255,0.9);
-      cursor: not-allowed;
+      cursor: pointer;
+      transition: background .18s ease;
+    }
+    .section.is-locked .lock-overlay::before {
+      content: '🔓  ';
+      font-size: 24px;
+      margin-right: 4px;
+    }
+    .section.is-locked .lock-overlay:hover {
+      background: rgba(31,107,58,0.08);
+    }
+    .section.is-locked .lock-overlay::after {
+      content: ' · Klicken zum Entsperren';
+      opacity: 0.7;
+      font-size: 14px;
+      font-weight: 600;
     }
     .page-alert {
       display: none;
@@ -853,9 +827,9 @@
     }
     .tech-card.is-idle {
       position: relative;
-      background: #eef7f1;
-      border-color: #cfe0d3;
-      box-shadow: 0 8px 18px rgba(22, 84, 45, 0.10);
+      background: #f4f7f5;
+      border-color: #dde7e0;
+      box-shadow: 0 4px 10px rgba(22, 84, 45, 0.05);
       opacity: 1;
       overflow: hidden;
     }
@@ -885,10 +859,10 @@
       display: none;
     }
     .tech-card.is-idle .tech-card-head {
-      color: var(--brand-strong);
+      color: #4a6a52;
       font-size: 18px;
       line-height: 1.2;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: -0.01em;
       max-width: 100%;
       text-wrap: balance;
@@ -913,10 +887,378 @@
     }
     .tech-card-title {
       display: grid;
-      grid-template-columns: 24px 1fr;
+      grid-template-columns: 24px 1fr auto;
       gap: 10px;
       align-items: center;
       margin-bottom: 2px;
+    }
+    /* Fragezeichen-Button oben rechts in der tech-card */
+    .unknown-btn-top {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      font-size: 15px;
+    }
+
+    /* Eingabefeld neben dem Slider */
+    .slider-input {
+      width: 110px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 10px 8px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      background: #f9fbfa;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .slider-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(31,107,58,.10);
+    }
+    /* Chrome/Safari: Spinner ausblenden für saubereres Look */
+    .slider-input::-webkit-outer-spin-button,
+    .slider-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .slider-input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    /* Schwebender Einwände-Button: fix rechts unten */
+    .floating-objection-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(31,107,58,.35), 0 2px 6px rgba(0,0,0,.12);
+      transition: all .2s ease;
+    }
+    .floating-objection-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(31,107,58,.45), 0 4px 10px rgba(0,0,0,.15);
+    }
+    .floating-objection-btn.is-return {
+      background: #6b7280;
+    }
+    .floating-objection-btn.is-return:hover {
+      background: #4b5563;
+    }
+    .floating-icon {
+      font-size: 16px;
+    }
+
+    /* Schwebender Notizen-Button: fix links unten */
+    .floating-notes-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #f7c948;
+      color: #5a3b00;
+      border: none;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(211,158,30,.35), 0 2px 6px rgba(0,0,0,.12);
+      transition: all .2s ease;
+    }
+    .floating-notes-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(211,158,30,.45), 0 4px 10px rgba(0,0,0,.15);
+    }
+    .floating-notes-btn.is-open {
+      background: #eaa300;
+      color: #fff;
+    }
+
+    /* Notizen-Popover (Apple-Notes-Style) */
+    .notes-popover {
+      position: fixed;
+      bottom: 80px;
+      left: 24px;
+      z-index: 1000;
+      width: 360px;
+      max-width: calc(100vw - 48px);
+      background: #fffbea;
+      border: 1px solid #f0d88a;
+      border-radius: 14px;
+      box-shadow: 0 24px 48px rgba(90,59,0,.22), 0 6px 14px rgba(0,0,0,.10);
+      overflow: hidden;
+      transform-origin: bottom left;
+      transform: scale(0.95) translateY(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .18s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity .14s ease;
+    }
+    .notes-popover.is-open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .notes-popover-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+      border-bottom: 1px solid #f0d88a;
+      background: linear-gradient(180deg, #fff5d0, #fffbea);
+    }
+    .notes-popover-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #5a3b00;
+      letter-spacing: -0.01em;
+    }
+    .notes-popover-close {
+      background: transparent;
+      border: none;
+      color: #8a5a00;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 6px;
+      border-radius: 6px;
+      transition: background .15s ease;
+    }
+    .notes-popover-close:hover {
+      background: rgba(211,158,30,.15);
+    }
+    .notes-popover-text {
+      width: 100%;
+      height: 220px;
+      border: none;
+      background: transparent;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #1b1f1c;
+      resize: none;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .notes-popover-foot {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px 10px;
+      border-top: 1px solid #f0d88a;
+      font-size: 11px;
+      color: #8a5a00;
+      font-weight: 600;
+    }
+
+    /* Schwebender Kundenprofil-Button: fix oben links */
+    .floating-profile-btn {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 999;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(99,102,241,.35), 0 2px 6px rgba(0,0,0,.12);
+      transition: all .2s ease;
+    }
+    .floating-profile-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(99,102,241,.45), 0 4px 10px rgba(0,0,0,.15);
+    }
+    .floating-profile-btn.is-open {
+      background: #4f46e5;
+    }
+    .floating-profile-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* Kundenprofil-Popover */
+    .profile-popover {
+      position: fixed;
+      top: 80px;
+      left: 24px;
+      z-index: 1000;
+      width: 380px;
+      max-width: calc(100vw - 48px);
+      background: #fff;
+      border: 1px solid #d4d6f5;
+      border-radius: 14px;
+      box-shadow: 0 24px 48px rgba(31,41,55,.18), 0 6px 14px rgba(0,0,0,.10);
+      overflow: hidden;
+      transform-origin: top left;
+      transform: scale(0.95) translateY(-8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .18s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity .14s ease;
+    }
+    .profile-popover.is-open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .profile-popover-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+      border-bottom: 1px solid #e5e7fa;
+      background: linear-gradient(180deg, #eef0ff, #fff);
+    }
+    .profile-popover-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e1b4b;
+      letter-spacing: -0.01em;
+    }
+    .profile-popover-close {
+      background: transparent;
+      border: none;
+      color: #6366f1;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 6px;
+      border-radius: 6px;
+      transition: background .15s ease;
+    }
+    .profile-popover-close:hover {
+      background: rgba(99,102,241,.12);
+    }
+    .profile-popover-body {
+      padding: 14px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .profile-field {
+      margin-bottom: 12px;
+    }
+    .profile-field:last-child {
+      margin-bottom: 0;
+    }
+    .profile-field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 4px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .profile-field input[type="text"],
+    .profile-field input[type="number"],
+    .profile-field select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #d4d6f5;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #1b1f1c;
+      background: #fafbff;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color .15s, background .15s;
+    }
+    .profile-field input:focus,
+    .profile-field select:focus {
+      border-color: #6366f1;
+      background: #fff;
+    }
+    .profile-popover-foot {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 14px 10px;
+      border-top: 1px solid #e5e7fa;
+      font-size: 11px;
+      color: #4b5563;
+      font-weight: 600;
+      background: #fafbff;
+    }
+    .color-chips {
+      display: flex;
+      gap: 8px;
+    }
+    .color-chip {
+      flex: 1;
+      padding: 9px 6px;
+      border: 2px solid #e5e7fa;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all .15s ease;
+      background: #fff;
+      font-family: inherit;
+    }
+    .color-chip[data-color="blau"]   { color: #1d4ed8; }
+    .color-chip[data-color="blau"].active   { border-color: #1d4ed8; background: #dbeafe; }
+    .color-chip[data-color="rot"]    { color: #b91c1c; }
+    .color-chip[data-color="rot"].active    { border-color: #b91c1c; background: #fee2e2; }
+    .color-chip[data-color="gruen"]  { color: #15803d; }
+    .color-chip[data-color="gruen"].active  { border-color: #15803d; background: #dcfce7; }
+    .color-chip-badge {
+      position: absolute;
+      top: -7px;
+      right: -7px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,.18);
+      pointer-events: none;
+    }
+    .color-chip {
+      position: relative;
+    }
+
+    /* Wirtschaftlichkeit: "ausgefüllter" Cost-Input wird leicht gefadet */
+    .input.is-filled-locked {
+      opacity: 0.55;
+      background: #f1f5f9;
+      transition: opacity .15s ease, background .15s ease;
+    }
+    .input.is-filled-locked:hover {
+      opacity: 0.85;
     }
     .tech-card-num {
       width: 24px;
@@ -1082,6 +1424,57 @@
     .answer-btn.good { border-left-color: var(--brand); }
     .answer-btn.maybe { border-left-color: var(--amber); }
     .answer-btn.bad { border-left-color: var(--warn); }
+
+    /* "Weiß nicht"-Button: kleiner roter Kreis mit Fragezeichen */
+    .unknown-btn {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border: 1.5px solid #E24B4A;
+      background: #FCEBEB;
+      color: #A32D2D;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 17px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: .15s ease;
+      flex-shrink: 0;
+    }
+    .unknown-btn:hover {
+      background: #F7C1C1;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(226,75,74,.20);
+    }
+    .unknown-btn.selected {
+      background: #A32D2D;
+      color: #fff;
+      border-color: #A32D2D;
+    }
+    .unknown-btn-inline {
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    /* Motive-Unknown-Button: neutral bis aktiviert, dann rot */
+    .unknown-motive-btn:hover {
+      border-left-color: #E24B4A !important;
+      background: #FDF3F3 !important;
+    }
+    .unknown-motive-btn.active,
+    .unknown-motive-btn.selected {
+      border-color: #E24B4A !important;
+      border-left-color: #E24B4A !important;
+      background: #FCEBEB !important;
+    }
+    .unknown-motive-btn.active .choice-icon,
+    .unknown-motive-btn.active .choice-title,
+    .unknown-motive-btn.selected .choice-icon,
+    .unknown-motive-btn.selected .choice-title {
+      color: #A32D2D;
+    }
 
     .hint-box { display: none; }
     .tip { display: none; }
@@ -1460,11 +1853,91 @@
   </style>
 </head>
 <body class="prep-mode">
+
+<!-- Schwebender Einwände-Button (immer sichtbar, scrollt zu Einwänden) -->
+<button type="button" id="floatingObjectionBtn" class="floating-objection-btn" title="Zu den Einwänden springen">
+  <span class="floating-icon" id="floatingObjectionIcon">⚠️</span>
+  <span id="floatingObjectionLabel">Einwände</span>
+</button>
+
+<!-- Schwebender Notizen-Button (links unten, öffnet Popover) -->
+<button type="button" id="floatingNotesBtn" class="floating-notes-btn" title="Kurznotizen öffnen">
+  <span style="font-size:16px;">📝</span>
+  <span>Notizen</span>
+</button>
+
+<!-- Notizen-Popover -->
+<div id="notesPopover" class="notes-popover" aria-hidden="true">
+  <div class="notes-popover-head">
+    <div class="notes-popover-title">Kurznotizen</div>
+    <button type="button" id="notesPopoverClose" class="notes-popover-close" aria-label="Schließen">×</button>
+  </div>
+  <textarea id="notesPopoverText" class="notes-popover-text" placeholder="Hier nebenbei notieren … (wird automatisch ins Gesprächsprotokoll übernommen)"></textarea>
+  <div class="notes-popover-foot">
+    <span id="notesPopoverCount">0 Zeichen</span>
+    <span style="opacity:0.6;">Wird automatisch gespeichert</span>
+  </div>
+</div>
+
+<!-- Schwebender Kundenprofil-Button (oben links) -->
+<button type="button" id="floatingProfileBtn" class="floating-profile-btn" title="Kundenprofil öffnen">
+  <span class="floating-profile-icon" id="floatingProfileIcon">🤷</span>
+  <span>Profil</span>
+</button>
+
+<!-- Kundenprofil-Popover -->
+<div id="profilePopover" class="profile-popover" aria-hidden="true">
+  <div class="profile-popover-head">
+    <div class="profile-popover-title">Kundenprofil</div>
+    <button type="button" id="profilePopoverClose" class="profile-popover-close" aria-label="Schließen">×</button>
+  </div>
+  <div class="profile-popover-body">
+    <div class="profile-field">
+      <span class="profile-field-label">Beruf</span>
+      <input type="text" id="profile-beruf" placeholder="z. B. Lehrer, Ingenieurin, Selbstständig" autocomplete="off">
+    </div>
+    <div class="profile-field">
+      <span class="profile-field-label">Familienstand</span>
+      <select id="profile-familienstand">
+        <option value="">— bitte wählen —</option>
+        <option value="ledig">Ledig</option>
+        <option value="verheiratet">Verheiratet</option>
+        <option value="lebenspartnerschaft">In Lebenspartnerschaft</option>
+        <option value="geschieden">Geschieden</option>
+        <option value="verwitwet">Verwitwet</option>
+      </select>
+    </div>
+    <div class="profile-field">
+      <span class="profile-field-label">Alter</span>
+      <input type="number" id="profile-alter" min="18" max="120" placeholder="z. B. 45" autocomplete="off">
+    </div>
+    <div class="profile-field">
+      <span class="profile-field-label">Hobbys</span>
+      <input type="text" id="profile-hobbys" placeholder="z. B. Garten, Wandern, Modellbau" autocomplete="off">
+    </div>
+    <div class="profile-field">
+      <span class="profile-field-label">Interessen</span>
+      <input type="text" id="profile-interessen" placeholder="z. B. Nachhaltigkeit, Technik, Reisen" autocomplete="off">
+    </div>
+    <div class="profile-field">
+      <span class="profile-field-label">Farbtyp</span>
+      <div class="color-chips" id="profile-farbtyp-chips">
+        <button type="button" class="color-chip" data-color="blau">🔵 Blau</button>
+        <button type="button" class="color-chip" data-color="rot">🔴 Rot</button>
+        <button type="button" class="color-chip" data-color="gruen">🟢 Grün</button>
+      </div>
+    </div>
+  </div>
+  <div class="profile-popover-foot">
+    <span id="profilePopoverProgress">0 / 6 ausgefüllt</span>
+    <span style="opacity:0.6;">Automatisch gespeichert</span>
+  </div>
+</div>
   <header class="header">
     <div class="header-wrap">
       <div class="eyebrow">Telefonleitfaden · Erneuerbare Energien</div>
       <div class="title">Kundengespräch am Telefon</div>
-      <div class="subtitle">Vorbereitung → Einstieg → Motive → Technik → Wirtschaft → Interesse → Einwände → Termin</div>
+      <div class="subtitle">Vorbereitung → Einstieg → Motive → Technik → Wirtschaft → Interesse → Termin → Einwände</div>
     </div>
   </header>
 
@@ -1476,8 +1949,8 @@
       <div class="progress-step" data-progress="3"><div class="progress-dot">3</div><div class="progress-label">Technik</div></div>
       <div class="progress-step" data-progress="4"><div class="progress-dot">4</div><div class="progress-label">Wirtschaft</div></div>
       <div class="progress-step" data-progress="5"><div class="progress-dot">5</div><div class="progress-label">Interesse</div></div>
-      <div class="progress-step" data-progress="6"><div class="progress-dot">6</div><div class="progress-label">Einwände</div></div>
-      <div class="progress-step" data-progress="7"><div class="progress-dot">7</div><div class="progress-label">Termin</div></div>
+      <div class="progress-step" data-progress="6"><div class="progress-dot">6</div><div class="progress-label">Termin</div></div>
+      <div class="progress-step" data-progress="7"><div class="progress-dot">7</div><div class="progress-label">Einwände</div></div>
       <button class="progress-back" type="button" id="backBtn"><span class="progress-back-dot">←</span><span class="progress-back-label">Zurück</span></button>
     </div>
   </div>
@@ -1538,15 +2011,15 @@
         <div class="card" id="themeCard" style="display:none;">
           <div class="badge">Thema</div>
           <div class="card-title">Worum geht es im Gespräch?</div>
-          <div class="card-help">Mehrfachauswahl möglich. <strong>Erstes ausgewähltes Thema = Haupt-Thema</strong> (steuert den Leitfaden). Weitere Themen werden im Gespräch nur kurz angesprochen.</div>
+          <div class="card-help">Mehrfachauswahl möglich: Wähle beide für eine PV + Wärmepumpen-Kombination.</div>
           <div class="grid-1">
             <button class="choice topic-btn" type="button" data-topic="pv" id="topic-pv">
               <div class="choice-icon">☀️</div>
               <div>
                 <div class="choice-title">Photovoltaik</div>
-                <div class="choice-text">Interesse an PV-Anlage oder Speicher.</div>
+                <div class="choice-text">Interesse an PV-Anlage oder Batteriespeicher.</div>
               </div>
-              <div class="choice-tag topic-tag">Thema wählen</div>
+              <div class="choice-tag">Auswählen</div>
             </button>
             <button class="choice topic-btn" type="button" data-topic="wp" id="topic-wp">
               <div class="choice-icon">🔥</div>
@@ -1554,27 +2027,11 @@
                 <div class="choice-title">Wärmepumpe</div>
                 <div class="choice-text">Interesse an Wärmepumpe oder Heizungstausch.</div>
               </div>
-              <div class="choice-tag topic-tag">Thema wählen</div>
-            </button>
-            <button class="choice topic-btn" type="button" data-topic="sv" id="topic-sv">
-              <div class="choice-icon">⚡</div>
-              <div>
-                <div class="choice-title">Stromvergleich</div>
-                <div class="choice-text">Aktuellen Stromtarif vergleichen und optimieren.</div>
-              </div>
-              <div class="choice-tag topic-tag">Thema wählen</div>
-            </button>
-            <button class="choice topic-btn" type="button" data-topic="gv" id="topic-gv">
-              <div class="choice-icon">🔥</div>
-              <div>
-                <div class="choice-title">Gasvergleich</div>
-                <div class="choice-text">Aktuellen Gastarif vergleichen und optimieren.</div>
-              </div>
-              <div class="choice-tag topic-tag">Thema wählen</div>
+              <div class="choice-tag">Auswählen</div>
             </button>
           </div>
-          <div style="margin-top:18px; display:flex; justify-content:flex-end;">
-            <button class="btn-primary" type="button" id="startGuideBtn" disabled>Gespräch starten →</button>
+          <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+            <button class="btn-primary" type="button" id="startGuideBtn" onclick="startGuide()" disabled style="opacity:0.5; cursor:not-allowed;">Weiter zum Leitfaden →</button>
           </div>
         </div>
       </div>
@@ -1603,13 +2060,6 @@
           </div>
         </div>
 
-        <div class="card secondary-topics-card hidden" id="secondaryTopicsCard">
-          <div class="badge">Auch ansprechen</div>
-          <div class="card-title" style="font-size:16px;">Neben dem Hauptthema kurz erwähnen</div>
-          <div class="card-help" style="margin-bottom:12px;">Diese Themen hat der Kunde zusätzlich angegeben. Streu am Ende des Gesprächs 1–2 Sätze ein – nicht das Hauptthema verwässern.</div>
-          <div id="secondaryTopicsList"></div>
-        </div>
-
         <div class="spoken-block active" id="spoken-wp">
           <div class="spoken-label">Wärmepumpe · Gesprächseinstieg</div>
           <div class="spoken-item"><div class="spoken-num">1</div><div><div class="spoken-text">„Guten Tag, mein Name ist [Name] von EnergyEngel, dem unabhängigen Makler für erneuerbare Energie. Ich rufe an, um einen Termin mit Ihnen zu vereinbaren – haben Sie 5 Minuten für mich?“</div></div></div>
@@ -1626,19 +2076,11 @@
           <div class="response-actions hidden second-response-actions"><button class="btn-primary second-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary second-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
         </div>
 
-        <div class="spoken-block" id="spoken-sv">
-          <div class="spoken-label">Stromvergleich · Gesprächseinstieg</div>
+        <div class="spoken-block" id="spoken-pvwp">
+          <div class="spoken-label">PV + Wärmepumpe · Gesprächseinstieg</div>
           <div class="spoken-item"><div class="spoken-num">1</div><div><div class="spoken-text">„Guten Tag, mein Name ist [Name] von EnergyEngel, dem unabhängigen Makler für erneuerbare Energie. Ich rufe an, um einen Termin mit Ihnen zu vereinbaren – haben Sie 5 Minuten für mich?“</div></div></div>
           <div class="response-actions"><button class="btn-primary first-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary first-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
-          <div class="spoken-item hidden"><div class="spoken-num">2</div><div><div class="spoken-text">„Wir prüfen unabhängig, was Sie aktuell für Ihren Strom zahlen und ob es bessere Tarife für Ihre Situation gibt – und das ganz ohne, dass Sie selber vergleichen müssen.“</div></div></div>
-          <div class="response-actions hidden second-response-actions"><button class="btn-primary second-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary second-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
-        </div>
-
-        <div class="spoken-block" id="spoken-gv">
-          <div class="spoken-label">Gasvergleich · Gesprächseinstieg</div>
-          <div class="spoken-item"><div class="spoken-num">1</div><div><div class="spoken-text">„Guten Tag, mein Name ist [Name] von EnergyEngel, dem unabhängigen Makler für erneuerbare Energie. Ich rufe an, um einen Termin mit Ihnen zu vereinbaren – haben Sie 5 Minuten für mich?“</div></div></div>
-          <div class="response-actions"><button class="btn-primary first-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary first-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
-          <div class="spoken-item hidden"><div class="spoken-num">2</div><div><div class="spoken-text">„Wir prüfen unabhängig, was Sie aktuell für Ihr Gas zahlen und ob ein Wechsel für Sie spürbar Geld spart – ohne dass Sie selber Tarife durchforsten müssen.“</div></div></div>
+          <div class="spoken-item hidden"><div class="spoken-num">2</div><div><div class="spoken-text">„Kurz zu uns: EnergyEngel ist ein unabhängiger Makler – wir schauen, was für Ihre Immobilie, Ihren Verbrauch und Ihr Budget wirklich Sinn macht. Gerade die Kombination aus Photovoltaik und Wärmepumpe bietet enorme Synergien – der selbst erzeugte Strom treibt die Wärmepumpe an. Damit ich gleich das Richtige für Sie heraussuchen kann – darf ich Ihnen kurz ein paar Fragen stellen?“</div></div></div>
           <div class="response-actions hidden second-response-actions"><button class="btn-primary second-response-btn" type="button" data-response="yes">Kunde sagt Ja</button><button class="btn-secondary second-response-btn" type="button" data-response="no">Kunde sagt Nein</button></div>
         </div>
 
@@ -1664,7 +2106,17 @@
 
         <div class="compact-card">
           
-          <div class="motive-grid-compact" id="motiveGrid"></div>
+          <div class="motive-grid-compact" id="motiveGrid">
+            <button class="choice compact motive-btn" type="button" data-motive="gaskosten"><div class="choice-icon">💸</div><div><div class="choice-title">Hohe Energiekosten / Gas</div><div class="choice-text">„Ich zahle so viel für Gas...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="unabhaengig"><div class="choice-icon">🛡️</div><div><div class="choice-title">Unabhängigkeit</div><div class="choice-text">„Ich will nicht mehr abhängig sein...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="zukunft"><div class="choice-icon">⚖️</div><div><div class="choice-title">GEG / Zukunft</div><div class="choice-text">„Ich habe gehört, dass sich gesetzlich etwas ändert...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="heizung-alt"><div class="choice-icon">🔧</div><div><div class="choice-title">Alte Heizung / Defekt</div><div class="choice-text">„Meine Heizung ist alt / kaputt...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="pv"><div class="choice-icon">☀️</div><div><div class="choice-title">Hat PV / will kombinieren</div><div class="choice-text">„Ich habe schon eine PV-Anlage...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="machbarkeit"><div class="choice-icon">🏠</div><div><div class="choice-title">Machbarkeit</div><div class="choice-text">„Ich will erstmal wissen, ob das bei meinem Haus überhaupt geht...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="foerderung"><div class="choice-icon">💶</div><div><div class="choice-title">Förderung</div><div class="choice-text">„Mich interessiert, welche Förderung ich bekommen kann...“</div></div></button>
+            <button class="choice compact motive-btn" type="button" data-motive="neubau"><div class="choice-icon">🏗️</div><div><div class="choice-title">Neubau / Sanierung</div><div class="choice-text">„Wir bauen / sanieren gerade...“</div></div></button>
+            <button class="choice compact motive-btn unknown-motive-btn" type="button" data-unknown="motive" title="Kunde nennt kein konkretes Motiv"><div class="choice-icon">❓</div><div><div class="choice-title">Kunde nennt kein Motiv</div><div class="choice-text">Kunde kann oder will kein konkretes Motiv nennen.</div></div></button>
+          </div>
           <div class="quote-box followup-quote" id="motiveFollowupQuote">„Das verstehe ich natürlich, gibt es weitere Themen, die für Sie wichtig sind?“</div>
           <div class="say-stack question-stage" id="motiveCloseWrap" style="display:none; margin-top:14px;">
             <div class="quote-box" id="motiveCloseQuestion">„Wenn Sie [Motiv 1] und [Motiv 2], dann steht einer Umsetzung eigentlich nichts im Weg, oder?“</div>
@@ -1689,7 +2141,11 @@
           <div class="tech-sections">
             <div class="tech-select-grid" id="techSelectGrid">
               <div class="tech-card tech-question-card" data-tech-question="heatSelect">
-                <div class="tech-card-title"><div class="tech-card-num">1</div><div><div class="tech-card-head">Heizsystem</div></div></div>
+                <div class="tech-card-title">
+                  <div class="tech-card-num">1</div>
+                  <div><div class="tech-card-head">Heizsystem</div></div>
+                  <button class="unknown-btn unknown-btn-top" type="button" data-unknown="heatSource" title="Kunde weiß nicht, wie geheizt wird">?</button>
+                </div>
                 <div class="tech-card-body">
                   <div class="choice-row-4">
                     <button class="answer-btn good tight heat-source-btn" type="button" data-source="gas">🔥 Gas</button>
@@ -1701,7 +2157,11 @@
               </div>
 
               <div class="tech-card tech-question-card pv-card" data-tech-question="pv">
-                <div class="tech-card-title"><div class="tech-card-num">2</div><div><div class="tech-card-head">PV Anlage</div></div></div>
+                <div class="tech-card-title">
+                  <div class="tech-card-num">2</div>
+                  <div><div class="tech-card-head">PV Anlage</div></div>
+                  <button class="unknown-btn unknown-btn-top" type="button" data-unknown="pvAnlage" title="Kunde weiß nicht, ob PV vorhanden ist">?</button>
+                </div>
                 <div class="tech-card-body">
                   <div class="choice-row-2">
                     <button class="answer-btn good tight pv-btn" type="button" data-pv="yes">☀️ Ja</button>
@@ -1711,37 +2171,23 @@
                 </div>
                 <div class="tech-summary" id="pvSummary">—</div>
               </div>
-
-              <div class="tech-card tech-question-card" data-tech-question="roof" style="display:none;">
-                <div class="tech-card-title"><div class="tech-card-num">1</div><div><div class="tech-card-head">Dachausrichtung</div></div></div>
-                <div class="tech-card-body">
-                  <div class="choice-row-4">
-                    <button class="answer-btn good tight roof-btn" type="button" data-roof="south">☀️ Süd</button>
-                    <button class="answer-btn good tight roof-btn" type="button" data-roof="east-west">🌅 Ost/West</button>
-                    <button class="answer-btn maybe tight roof-btn" type="button" data-roof="north">🧭 Nord</button>
-                    <button class="answer-btn maybe tight roof-btn" type="button" data-roof="unknown">🤷 Unbekannt</button>
-                  </div>
-                </div>
-                <div class="tech-summary" id="roofSummary">—</div>
-              </div>
-
-              <div class="tech-card tech-question-card" data-tech-question="provider" style="display:none;">
-                <div class="tech-card-title"><div class="tech-card-num">2</div><div><div class="tech-card-head">Aktueller Anbieter</div></div></div>
-                <div class="tech-card-body">
-                  <input type="text" id="providerInput" class="input" placeholder="z. B. E.ON, Vattenfall, Stadtwerke ..." style="width:100%;padding:10px 12px;border:1px solid #d9e2dc;border-radius:8px;font-size:14px;" />
-                </div>
-                <div class="tech-summary" id="providerSummary">—</div>
-              </div>
             </div>
 
             <div class="tech-slider-grid" id="techSliderGrid">
               <div class="tech-card tech-question-card" data-tech-question="heat">
-                <div class="tech-card-title"><div class="tech-card-num">3</div><div><div class="tech-card-head">Heizung Verbrauch</div></div></div>
+                <div class="tech-card-title">
+                  <div class="tech-card-num">3</div>
+                  <div><div class="tech-card-head">Heizung Verbrauch</div></div>
+                  <button class="unknown-btn unknown-btn-top" type="button" data-unknown="heatUsage" title="Kunde kennt den Heizungsverbrauch nicht">?</button>
+                </div>
                 <div class="tech-card-body">
                   <div class="tech-detail" id="heatUsageDetail">
-                    <div class="range-wrap">
-                      <input class="range-input" id="heatUsageSlider" type="range" min="0" max="45000" step="500" value="14000" />
-                      <div class="range-meta"><span id="heatUsageMin">0 kWh</span><span class="range-value" id="heatUsageValue">14.000 kWh / Jahr</span><span id="heatUsageMax">45.000 kWh</span></div>
+                    <div class="range-wrap" style="display:flex; align-items:center; gap:12px;">
+                      <div style="flex:1;">
+                        <input class="range-input" id="heatUsageSlider" type="range" min="0" max="45000" step="500" value="14000" />
+                        <div class="range-meta"><span id="heatUsageMin">0 kWh</span><span class="range-value" id="heatUsageValue">14.000 kWh / Jahr</span><span id="heatUsageMax">45.000 kWh</span></div>
+                      </div>
+                      <input type="number" class="input slider-input" id="heatUsageInput" min="0" max="45000" step="100" value="14000" />
                     </div>
                     <div class="tech-note" id="heatUsageNote">Gasverbrauch pro Jahr.</div>
                   </div>
@@ -1750,12 +2196,19 @@
               </div>
 
               <div class="tech-card tech-question-card" data-tech-question="power">
-                <div class="tech-card-title"><div class="tech-card-num">4</div><div><div class="tech-card-head">Stromverbrauch</div></div></div>
+                <div class="tech-card-title">
+                  <div class="tech-card-num">4</div>
+                  <div><div class="tech-card-head">Stromverbrauch</div></div>
+                  <button class="unknown-btn unknown-btn-top" type="button" data-unknown="powerUsage" title="Kunde kennt den Stromverbrauch nicht">?</button>
+                </div>
                 <div class="tech-card-body">
                   <div class="tech-detail">
-                    <div class="range-wrap">
-                      <input class="range-input" id="powerUsageSlider" type="range" min="0" max="20000" step="100" value="3500" />
-                      <div class="range-meta"><span>0 kWh</span><span class="range-value" id="powerUsageValue">3.500 kWh / Jahr</span><span>20.000 kWh</span></div>
+                    <div class="range-wrap" style="display:flex; align-items:center; gap:12px;">
+                      <div style="flex:1;">
+                        <input class="range-input" id="powerUsageSlider" type="range" min="0" max="20000" step="100" value="3500" />
+                        <div class="range-meta"><span>0 kWh</span><span class="range-value" id="powerUsageValue">3.500 kWh / Jahr</span><span>20.000 kWh</span></div>
+                      </div>
+                      <input type="number" class="input slider-input" id="powerUsageInput" min="0" max="20000" step="100" value="3500" />
                     </div>
                   </div>
                 </div>
@@ -1763,12 +2216,19 @@
               </div>
 
               <div class="tech-card tech-question-card" data-tech-question="building">
-                <div class="tech-card-title"><div class="tech-card-num">5</div><div><div class="tech-card-head">Baujahr</div></div></div>
+                <div class="tech-card-title">
+                  <div class="tech-card-num">5</div>
+                  <div><div class="tech-card-head">Baujahr</div></div>
+                  <button class="unknown-btn unknown-btn-top" type="button" data-unknown="buildingYear" title="Kunde kennt das Baujahr nicht">?</button>
+                </div>
                 <div class="tech-card-body">
                   <div class="tech-detail">
-                    <div class="range-wrap">
-                      <input class="range-input" id="buildingYearSlider" type="range" min="1800" max="2026" step="1" value="1995" />
-                      <div class="range-meta"><span>1800</span><span class="range-value" id="buildingYearValue">1995</span><span>2026</span></div>
+                    <div class="range-wrap" style="display:flex; align-items:center; gap:12px;">
+                      <div style="flex:1;">
+                        <input class="range-input" id="buildingYearSlider" type="range" min="1800" max="2026" step="1" value="1995" />
+                        <div class="range-meta"><span>1800</span><span class="range-value" id="buildingYearValue">1995</span><span>2026</span></div>
+                      </div>
+                      <input type="number" class="input slider-input" id="buildingYearInput" min="1800" max="2026" step="1" value="1995" />
                     </div>
                     <div class="building-meta">
                       <div class="building-meta-row"><span>Gebäudetyp</span><span class="building-meta-value" id="buildingSubtypeValue">Nach 3. WSchVO</span></div>
@@ -1779,12 +2239,19 @@
               </div>
 
               <div class="tech-card tech-question-card" data-tech-question="size">
-                <div class="tech-card-title"><div class="tech-card-num">6</div><div><div class="tech-card-head">Wohnfläche</div></div></div>
+                <div class="tech-card-title">
+                  <div class="tech-card-num">6</div>
+                  <div><div class="tech-card-head">Wohnfläche</div></div>
+                  <button class="unknown-btn unknown-btn-top" type="button" data-unknown="houseSize" title="Kunde kennt die Wohnfläche nicht">?</button>
+                </div>
                 <div class="tech-card-body">
                   <div class="tech-detail">
-                    <div class="range-wrap">
-                      <input class="range-input" id="sizeSlider" type="range" min="0" max="400" step="5" value="140" />
-                      <div class="range-meta"><span>0 qm</span><span class="range-value" id="sizeValue">140 qm</span><span>400 qm</span></div>
+                    <div class="range-wrap" style="display:flex; align-items:center; gap:12px;">
+                      <div style="flex:1;">
+                        <input class="range-input" id="sizeSlider" type="range" min="0" max="400" step="5" value="140" />
+                        <div class="range-meta"><span>0 qm</span><span class="range-value" id="sizeValue">140 qm</span><span>400 qm</span></div>
+                      </div>
+                      <input type="number" class="input slider-input" id="sizeInput" min="0" max="400" step="5" value="140" />
                     </div>
                     <div class="size-meta"><span>Kategorie</span><span class="size-meta-value" id="sizeCategoryValue">🏡 Mittel</span></div>
                   </div>
@@ -1820,52 +2287,62 @@
           <div class="stage-lock-body">
             <div class="compact-card">
           <div class="tech-slider-grid" id="economicSliderGrid">
-            <div class="tech-card" data-econ-question="econ-building">
-              <div class="tech-card-title"><div class="tech-card-num">1</div><div><div class="tech-card-head">Baujahr</div></div></div>
+            <div class="tech-card">
+              <div class="tech-card-title">
+                <div class="tech-card-num">1</div>
+                <div><div class="tech-card-head">Heizkosten</div></div>
+                <button class="unknown-btn unknown-btn-top" type="button" data-unknown="econHeatCost" title="Kunde kennt die Heizkosten nicht">?</button>
+              </div>
               <div class="tech-card-body">
                 <div class="tech-detail">
-                  <div class="range-wrap">
-                    <input class="range-input" id="econBuildingYearSlider" type="range" min="1800" max="2026" step="1" value="1995" />
-                    <div class="range-meta"><span>1800</span><span class="range-value" id="econBuildingYearValue">1995</span><span>2026</span></div>
+                  <div class="cost-period-toggle" style="display:flex; gap:8px; margin-bottom:12px;">
+                    <button type="button" class="answer-btn tight cost-period-btn selected" data-cost="heat" data-period="year">Im Jahr</button>
+                    <button type="button" class="answer-btn tight cost-period-btn" data-cost="heat" data-period="month">Im Monat</button>
+                  </div>
+                  <div class="range-wrap" style="display:flex; align-items:center; gap:12px;">
+                    <div style="flex:1;">
+                      <input class="range-input" id="econHeatCostSlider" type="range" min="0" max="6000" step="50" value="0" />
+                      <div class="range-meta">
+                        <span id="econHeatCostMin">0 €</span>
+                        <span class="range-value" id="econHeatCostValue">0 € / Jahr</span>
+                        <span id="econHeatCostMax">6.000 €</span>
+                      </div>
+                    </div>
+                    <input type="number" class="input slider-input" id="econHeatCostInput" placeholder="0" min="0" max="6000" step="10" />
+                    <span style="font-size:14px; font-weight:700; color:var(--text-soft); min-width:60px;" id="econHeatCostUnit">€ / Jahr</span>
                   </div>
                 </div>
               </div>
+              <div class="tech-summary" id="econHeatCostSummary">—</div>
             </div>
 
-            <div class="tech-card" data-econ-question="econ-size">
-              <div class="tech-card-title"><div class="tech-card-num">2</div><div><div class="tech-card-head">Wohnfläche</div></div></div>
+            <div class="tech-card">
+              <div class="tech-card-title">
+                <div class="tech-card-num">2</div>
+                <div><div class="tech-card-head">Stromkosten</div></div>
+                <button class="unknown-btn unknown-btn-top" type="button" data-unknown="econPowerCost" title="Kunde kennt die Stromkosten nicht">?</button>
+              </div>
               <div class="tech-card-body">
                 <div class="tech-detail">
-                  <div class="range-wrap">
-                    <input class="range-input" id="econSizeSlider" type="range" min="0" max="400" step="5" value="140" />
-                    <div class="range-meta"><span>0 qm</span><span class="range-value" id="econSizeValue">140 qm</span><span>400 qm</span></div>
+                  <div class="cost-period-toggle" style="display:flex; gap:8px; margin-bottom:12px;">
+                    <button type="button" class="answer-btn tight cost-period-btn selected" data-cost="power" data-period="year">Im Jahr</button>
+                    <button type="button" class="answer-btn tight cost-period-btn" data-cost="power" data-period="month">Im Monat</button>
+                  </div>
+                  <div class="range-wrap" style="display:flex; align-items:center; gap:12px;">
+                    <div style="flex:1;">
+                      <input class="range-input" id="econPowerCostSlider" type="range" min="0" max="3000" step="25" value="0" />
+                      <div class="range-meta">
+                        <span id="econPowerCostMin">0 €</span>
+                        <span class="range-value" id="econPowerCostValue">0 € / Jahr</span>
+                        <span id="econPowerCostMax">3.000 €</span>
+                      </div>
+                    </div>
+                    <input type="number" class="input slider-input" id="econPowerCostInput" placeholder="0" min="0" max="3000" step="10" />
+                    <span style="font-size:14px; font-weight:700; color:var(--text-soft); min-width:60px;" id="econPowerCostUnit">€ / Jahr</span>
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="tech-card" data-econ-question="econ-heat">
-              <div class="tech-card-title"><div class="tech-card-num">3</div><div><div class="tech-card-head" id="econHeatCostHead">Kosten pro kWh</div></div></div>
-              <div class="tech-card-body">
-                <div class="tech-detail">
-                  <div class="range-wrap">
-                    <input class="range-input" id="econHeatUsageSlider" type="range" min="0" max="0.5" step="0.01" value="0.12" />
-                    <div class="range-meta"><span id="econHeatUsageMin">0,00 €</span><span class="range-value" id="econHeatUsageValue">0,12 € / kWh</span><span id="econHeatUsageMax">0,50 €</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tech-card" data-econ-question="econ-power">
-              <div class="tech-card-title"><div class="tech-card-num">4</div><div><div class="tech-card-head" id="econPowerHead">Stromverbrauch</div></div></div>
-              <div class="tech-card-body">
-                <div class="tech-detail">
-                  <div class="range-wrap">
-                    <input class="range-input" id="econPowerUsageSlider" type="range" min="0" max="20000" step="100" value="3500" />
-                    <div class="range-meta"><span>0 kWh</span><span class="range-value" id="econPowerUsageValue">3.500 kWh / Jahr</span><span>20.000 kWh</span></div>
-                  </div>
-                </div>
-              </div>
+              <div class="tech-summary" id="econPowerCostSummary">—</div>
             </div>
           </div>
         </div>
@@ -1895,14 +2372,86 @@
                 <div class="interest-card" id="interest-foerderung"><div class="interest-text">„Viele denken zuerst an 30–40.000€, aber das ist brutto. Nach Förderung sind wir oft in einer Größenordnung, die deutlich entspannter aussieht.“</div></div>
                 <div class="interest-card" id="interest-geg"><div class="interest-text">„Was viele Eigentümer sagen: Lieber jetzt in Ruhe planen und Förderung sichern, als später unter Druck reagieren zu müssen.“</div></div>
                 <div class="interest-card" id="interest-neubau"><div class="interest-text">„Gerade im Neubau oder in der Sanierung ist das oft die logischste Lösung – effizient, zukunftssicher und technisch passend.“</div></div>
+                <div class="interest-card" id="interest-heizung-alt"><div class="interest-text">„Wenn die Heizung sowieso ansteht, ist der ideale Zeitpunkt jetzt — einmal sauber planen, Förderung mitnehmen und für die nächsten 20 Jahre Ruhe haben.“</div></div>
+                <div class="interest-card" id="interest-machbarkeit"><div class="interest-text">„Genau deshalb sprechen wir: Mein Kollege kommt vorbei, schaut sich Ihr Haus in 30 Minuten an und sagt Ihnen ehrlich, ob es Sinn macht — ohne Verpflichtung.“</div></div>
                 <div class="closing-card"><div class="closing-text" id="closingText">„Sie haben ja selbst gesagt, dass [Grund 1], [Grund 2] und [Grund 3] für Sie wichtig sind. Und genau deshalb macht es Sinn, dass wir uns das einmal sauber bei Ihnen anschauen.“</div></div>
               </div>
+            </div>
+            <div style="display:flex; justify-content:center; margin-top:18px;">
+              <button type="button" class="btn-primary" id="toTerminBtn" style="font-size:16px; padding:14px 28px;">
+                Weiter zum Termin →
+              </button>
             </div>
           </div>
           <div class="lock-overlay">Interesse wird frei, sobald der wirtschaftliche Vorabschluss beantwortet ist.</div>
         </div>
 
-        <div class="stage-lock is-locked question-stage" id="objectionStage" style="margin-top:14px;">
+        <div class="stage-lock is-locked question-stage" id="entscheiderStage" style="margin-top:14px;">
+          <div class="stage-lock-body">
+            <div class="card">
+              <div class="badge">Entscheider</div>
+              <div class="card-title">Entscheider absichern</div>
+              <div class="say-stack" style="margin-bottom:14px;">
+                <div class="quote-box">„Entscheiden eigentlich nur Sie über Neuinvestitionen für Ihre Immobilie oder gibt es noch jemand, für den das Gespräch interessant wird?“</div>
+              </div>
+              <div id="entscheiderWrap" style="display:flex; gap:8px; margin-top:10px;">
+                <button type="button" class="answer-btn good tight entscheider-btn" data-entscheider="yes">✓ Nur der Kunde</button>
+                <button type="button" class="answer-btn maybe tight entscheider-btn" data-entscheider="no">Es gibt weitere</button>
+              </div>
+              <div id="entscheiderExtraWrap" style="display:none; margin-top:10px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:var(--text-soft); margin-bottom:4px;">Weitere Entscheider (z.B. Partner, Geschäftsführer)</label>
+                <input type="text" id="entscheiderExtra" class="input" placeholder="z.B. Ehefrau, Geschäftspartner ..." style="width:100%;" />
+              </div>
+              <div style="display:flex; justify-content:center; margin-top:18px;">
+                <button type="button" class="btn-primary" id="toTerminAfterEntscheiderBtn" disabled style="font-size:16px; padding:14px 28px; opacity:0.5; cursor:not-allowed;">
+                  Weiter zum Termin →
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="lock-overlay">Entscheiderfrage wird frei, sobald das Interesse besprochen ist.</div>
+        </div>
+
+        <div class="stage-lock is-locked question-stage" id="termStage" style="margin-top:14px;">
+          <div class="stage-lock-body">
+            <div class="card">
+              <div class="badge">Termin</div>
+              <div class="card-title">Was sagst du jetzt?</div>
+              <div class="say-stack" style="margin-bottom:14px;">
+                <div class="quote-box" id="termIntro">„Dann lassen Sie uns das Ganze nochmal bei Ihnen vor Ort prüfen, damit wir ein genaues Angebot erstellen. Wie passt es nächste Woche bei Ihnen?“</div>
+              </div>
+
+              <div class="term-scheduler" id="termSchedulerWrap" style="margin-bottom:14px;">
+                <div class="term-scheduler-label">Termin festhalten</div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+                  <div style="flex:1; min-width:160px;">
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-soft); margin-bottom:4px;">Datum</label>
+                    <input type="date" id="terminDatum" class="input" style="width:100%;" />
+                  </div>
+                  <div style="flex:1; min-width:140px;">
+                    <label style="display:block; font-size:12px; font-weight:700; color:var(--text-soft); margin-bottom:4px;">Uhrzeit</label>
+                    <input type="time" id="terminUhrzeit" class="input" step="900" style="width:100%;" />
+                  </div>
+                </div>
+                <div id="terminPreview" style="margin-top:10px; font-size:14px; color:var(--brand-strong); font-weight:700; display:none;"></div>
+              </div>
+
+              <div class="term-flow">
+                <div class="term-step" data-term="2"><div class="term-num">1</div><div class="term-copy"><div class="term-title">Verbindlich machen</div><div class="term-line"><div class="term-text" id="termStep3Text">„Perfekt, dann notiere ich Ihnen [Termin]. Sie bekommen dazu noch eine kurze Bestätigung.“</div></div></div><div class="term-check" id="term-check-2"></div></div>
+                <div class="term-step" data-term="3"><div class="term-num">2</div><div class="term-copy"><div class="term-title">Abschließen</div><div class="term-line"><div class="term-text">„Super, dann freue ich mich auf den Termin. Danach haben Sie eine klare Grundlage für Ihre Entscheidung.“</div></div></div><div class="term-check" id="term-check-3"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="lock-overlay">Termin wird frei, sobald die Entscheiderfrage beantwortet ist.</div>
+        </div>
+
+        <div style="display:flex; justify-content:center; margin-top:20px; margin-bottom:6px;">
+          <button type="button" id="abschliessenBtn" class="btn-primary" style="font-size:17px; font-weight:800; padding:16px 40px; letter-spacing:0.04em;">
+            ✓ ABSCHLIESSEN &amp; PDF ERSTELLEN
+          </button>
+        </div>
+
+        <div class="stage-lock question-stage" id="objectionStage" style="margin-top:14px;">
           <div class="stage-lock-body">
             <div class="card">
               <div class="badge">Einwände</div>
@@ -1916,45 +2465,12 @@
           </div>
           <div class="lock-overlay">Einwände werden frei, sobald Interesse beantwortet ist.</div>
         </div>
-
-        <div class="stage-lock is-locked question-stage" id="termStage" style="margin-top:14px;">
-          <div class="stage-lock-body">
-            <div class="card">
-              <div class="badge">Termin</div>
-              <div class="card-title">Was sagst du jetzt?</div>
-              <div class="say-stack" style="margin-bottom:14px;">
-                <div class="quote-box" id="termIntro">„Wenn das für Sie passt, lassen Sie uns direkt den nächsten Schritt festmachen.“</div>
-              </div>
-              <div class="term-scheduler">
-                <div class="term-scheduler-label">Termin auswählen</div>
-                <select class="term-select" id="termSelect">
-                  <option value="">Bitte Termin wählen</option>
-                  <option value="Dienstag · 10:00 Uhr">Dienstag · 10:00 Uhr</option>
-                  <option value="Dienstag · 14:30 Uhr">Dienstag · 14:30 Uhr</option>
-                  <option value="Mittwoch · 10:00 Uhr">Mittwoch · 10:00 Uhr</option>
-                  <option value="Mittwoch · 14:30 Uhr">Mittwoch · 14:30 Uhr</option>
-                  <option value="Donnerstag · 10:00 Uhr">Donnerstag · 10:00 Uhr</option>
-                  <option value="Donnerstag · 14:30 Uhr">Donnerstag · 14:30 Uhr</option>
-                  <option value="Freitag · 10:00 Uhr">Freitag · 10:00 Uhr</option>
-                </select>
-              </div>
-              <div class="term-flow">
-                <div class="term-step" data-term="1"><div class="term-num">1</div><div class="term-copy"><div class="term-title">Termin setzen</div><div class="term-line"><div class="term-text">„Der sinnvollste nächste Schritt wäre, dass wir uns das einmal sauber bei Ihnen anschauen – dann wissen Sie konkret, was möglich ist und was nicht.“</div></div></div><div class="term-check" id="term-check-1"></div></div>
-                <div class="term-step" data-term="2"><div class="term-num">2</div><div class="term-copy"><div class="term-title">Zwei Optionen geben</div><div class="term-line"><div class="term-text">„Passt es bei Ihnen eher am Dienstag oder Donnerstag?“</div></div></div><div class="term-check" id="term-check-2"></div></div>
-                <div class="term-step" data-term="3"><div class="term-num">3</div><div class="term-copy"><div class="term-title">Entscheider absichern</div><div class="term-line"><div class="term-text">„Wichtig wäre, dass alle Entscheider dabei sind – ist Ihr Partner dann auch mit vor Ort?“</div></div></div><div class="term-check" id="term-check-3"></div></div>
-                <div class="term-step" data-term="4"><div class="term-num">4</div><div class="term-copy"><div class="term-title">Verbindlich machen</div><div class="term-line"><div class="term-text">„Perfekt, dann notiere ich Ihnen [Termin]. Sie bekommen dazu noch eine kurze Bestätigung.“</div></div></div><div class="term-check" id="term-check-4"></div></div>
-                <div class="term-step" data-term="5"><div class="term-num">5</div><div class="term-copy"><div class="term-title">Abschließen</div><div class="term-line"><div class="term-text">„Super, dann freue ich mich auf den Termin. Danach haben Sie eine klare Grundlage für Ihre Entscheidung.“</div></div></div><div class="term-check" id="term-check-5"></div></div>
-              </div>
-            </div>
-          </div>
-          <div class="lock-overlay">Termin wird frei, sobald die Einwände besprochen sind.</div>
-        </div>
       </section>
 
-      <section class="section is-locked" id="step-4">
+      <section class="section" id="step-4">
         <div class="lock-overlay">Einwände werden frei, sobald die vorherigen Antworten beantwortet sind.</div>
         <div class="section-head">
-          <div class="section-icon warn">6</div>
+          <div class="section-icon warn">7</div>
           <div>
             <div class="section-title">Einwände behandeln</div>
             <div class="section-sub">Nur das öffnen, was der Kunde wirklich anspricht.</div>
@@ -2001,10 +2517,10 @@
         <div class="actions"><button class="btn-primary" type="button" data-next="7">Weiter zu Termin</button></div>
       </section>
 
-      <section class="section is-locked" id="step-5">
+      <section class="section" id="step-5">
         <div class="lock-overlay">Termin wird frei, sobald die vorherigen Antworten beantwortet sind.</div>
         <div class="section-head">
-          <div class="section-icon">5</div>
+          <div class="section-icon">6</div>
           <div>
             <div class="section-title">Termin vereinbaren</div>
             <div class="section-sub">Leicht, klar, ohne Druck – aber verbindlich.</div>
@@ -2041,6 +2557,36 @@
             </div>
           </div>
         </div>
+
+        <div class="card" id="pipedrive-termin-card" style="display:none;">
+          <div class="card-title">📤 Termin an Pipedrive übermitteln</div>
+          <div class="goal"><span class="goal-label">Deal</span><span id="pipedrive-deal-label">—</span></div>
+          <div class="summary">
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-key">Termin-Datum</div>
+                <div class="summary-value">
+                  <input type="date" class="input" id="termin-datum" />
+                </div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-key">Termin-Uhrzeit</div>
+                <div class="summary-value">
+                  <input type="time" class="input" id="termin-uhrzeit" step="900" />
+                </div>
+              </div>
+              <div class="summary-item" style="grid-column:1 / -1;">
+                <div class="summary-key">Ort des Termins</div>
+                <div class="summary-value">
+                  <input type="text" class="input" id="termin-ort" placeholder="Vor Ort beim Kunden, Musterstraße 1, 12345 Ort" />
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn-primary" type="button" id="btn-termin-senden">📤 Termin bestätigen &amp; Bestätigungsmail an Kunde senden</button>
+            </div>
+          </div>
+        </div>
       </section>
     </section>
   </main>
@@ -2052,7 +2598,6 @@
       mode: 'prep',
       pfad: null,
       thema: null,
-      secondaryThemen: new Set(),
       currentStep: 0,
       tags: new Set(),
       motive: new Set(),
@@ -2062,11 +2607,11 @@
       motiveConfirm: null,
       techConfirm: null,
       econConfirm: null,
-      manualStageOpen: { technical: false, economic: false },
-      techDone: { heatSelect: false, pv: false, building: false, size: false, heat: false, power: false, roof: false, provider: false },
-      roof: null,
-      provider: '',
-      econDone: { building: false, size: false, heat: false, power: false },
+      manualStageOpen: { technical: false, economic: false, interest: false, entscheider: false, objection: false, term: false },
+      entscheiderAnswered: false,
+      techDone: { heatSelect: false, pv: false, building: false, size: false, heat: false, power: false },
+      econDone: { building: true, size: true, heat: false, power: false },
+      econCost: { heat: { period: 'year', value: null }, power: { period: 'year', value: null } },
       econHeatUnitCost: 0.12,
       buildingType: 'altbau',
       buildingSubtype: 'Nach 3. WSchVO',
@@ -2092,7 +2637,6 @@
         openingQuestion: '„Kurz gefragt: Wie kommen Sie gerade zu dem Thema Wärmepumpe?“',
         step3Sub: 'Nur Wärmepumpen-Argumente zeigen, die zur Situation des Kunden passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Wärmepumpen-Situation bei uns am Ende gesagt haben.“',
-        economicIntro: '„Wir erstellen für unsere Kunden eine Wirtschaftlichkeitsberechnung. Verraten Sie mir, was Sie momentan für Ihre Heizung im Jahr bezahlen?“',
         defaultObjection: 'wp'
       },
       pv: {
@@ -2100,31 +2644,20 @@
         openingQuestion: '„Kurz gefragt: Wie kommen Sie gerade zu dem Thema Photovoltaik?“',
         step3Sub: 'Nur Photovoltaik-Argumente zeigen, die zur Situation des Kunden passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Photovoltaik-Situation bei uns am Ende gesagt haben.“',
-        economicIntro: '„Damit ich Ihnen die Wirtschaftlichkeit sauber zeigen kann – was zahlen Sie aktuell pro Kilowattstunde Strom, und wie hoch ist Ihr Jahresverbrauch ungefähr?“',
         defaultObjection: 'pv'
       },
-      sv: {
-        step1Goal: 'Du eröffnest das Gespräch klar auf den Stromvergleich und führst direkt in die Tarif- und Verbrauchsfragen.',
-        openingQuestion: '„Kurz gefragt: Was zahlen Sie aktuell für Strom – und sind Sie damit zufrieden?“',
-        step3Sub: 'Nur Argumente zeigen, die zu Tarifoptimierung und Anbieterwechsel passen.',
-        interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Strom-Tarif-Situation bei uns am Ende gesagt haben.“',
-        economicIntro: '„Für einen sauberen Tarifvergleich brauche ich kurz: Was zahlen Sie aktuell pro Kilowattstunde, und wie hoch ist Ihr Jahresverbrauch?“',
-        defaultObjection: 'allg'
-      },
-      gv: {
-        step1Goal: 'Du eröffnest das Gespräch klar auf den Gasvergleich und führst direkt in die Tarif- und Verbrauchsfragen.',
-        openingQuestion: '„Kurz gefragt: Was zahlen Sie aktuell für Gas – und sind Sie damit zufrieden?“',
-        step3Sub: 'Nur Argumente zeigen, die zu Tarifoptimierung und Anbieterwechsel beim Gas passen.',
-        interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Gas-Tarif-Situation bei uns am Ende gesagt haben.“',
-        economicIntro: '„Für einen sauberen Tarifvergleich brauche ich kurz: Was zahlen Sie aktuell pro Kilowattstunde Gas, und wie viel verbrauchen Sie im Jahr?“',
-        defaultObjection: 'allg'
+      pvwp: {
+        step1Goal: 'Du eröffnest das Gespräch auf PV + Wärmepumpe und zeigst die Kombi-Chance: Eigenstromerzeugung trifft effizienten Wärmebedarf.',
+        openingQuestion: '„Kurz gefragt: Wie kommen Sie gerade zu dem Thema Photovoltaik und Wärmepumpe?”',
+        step3Sub: 'PV- und Wärmepumpen-Argumente kombiniert zeigen – Synergien hervorheben.',
+        interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen PV-Wärmepumpen-Situation bei uns am Ende gesagt haben.”',
+        defaultObjection: 'wp'
       },
       empfehlung: {
         step1Goal: 'Du nutzt den Vertrauensvorschuss der Empfehlung und gehst danach sauber ins Thema.',
         openingQuestion: '„Kurz gefragt: Was war für Sie der Anlass, dass wir heute miteinander sprechen?“',
         step3Sub: 'Nur die Argumente zeigen, die zur Situation des empfohlenen Kontakts passen.',
         interestIntro: '„Lassen Sie mich kurz sagen, was Kunden in einer ähnlichen Situation bei uns am Ende gesagt haben.“',
-        economicIntro: '„Wir erstellen für unsere Kunden eine kurze Wirtschaftlichkeits-Einschätzung. Verraten Sie mir kurz, was Sie aktuell für Ihre Energie zahlen?“',
         defaultObjection: 'allg'
       }
     };
@@ -2138,28 +2671,17 @@
 
     function valueOrDash(v) { return String(v || '').trim() || '—'; }
     function getPfadLabel() { return state.pfad === 'lead' ? 'Warmer Lead' : state.pfad === 'empfehlung' ? 'Empfehlung' : '—'; }
-    const themaLabels = {
-      wp: 'Wärmepumpe',
-      pv: 'Photovoltaik',
-      sv: 'Stromvergleich',
-      gv: 'Gasvergleich'
-    };
-    const secondaryHints = {
-      wp: 'Beim Heizungsthema kannst du fragen, wie alt die aktuelle Heizung ist – Wärmepumpe ist oft für später ein Thema.',
-      pv: 'Falls Dach geeignet sein könnte: kurz erwähnen, dass eine PV-Anlage langfristig die Stromkosten deckelt.',
-      sv: 'Bei laufendem Stromvertrag: kurz fragen, was er aktuell zahlt – Tarifvergleich kostet nichts und spart oft 200–400 € im Jahr.',
-      gv: 'Bei laufendem Gasvertrag: kurz fragen, was er pro kWh zahlt – ein Vergleich ist schnell gemacht und lohnt sich meist.'
-    };
     function getThemaLabel() {
+      if (state.thema === 'wp')   return 'Wärmepumpe';
+      if (state.thema === 'pv')   return 'Photovoltaik';
+      if (state.thema === 'pvwp') return 'PV + Wärmepumpe';
       if (state.pfad === 'empfehlung') return 'Empfehlungsfall / offen';
-      const main = themaLabels[state.thema];
-      if (!main) return '—';
-      const secondary = Array.from(state.secondaryThemen).map((k) => themaLabels[k]).filter(Boolean);
-      return secondary.length ? `${main} (auch: ${secondary.join(', ')})` : main;
+      return '—';
     }
     function currentGuide() {
-      if (state.pfad === 'empfehlung') return guideText.empfehlung;
-      return guideText[state.thema] || guideText.wp;
+      // Topic-spezifische Texte, egal ob Lead oder Empfehlung
+      // Der Gesprächseinstieg (spoken-Block) zeigt trotzdem spoken-empfehlung wenn pfad=empfehlung
+      return guideText[state.thema] || guideText.empfehlung;
     }
 
     function setMode(mode) {
@@ -2208,6 +2730,16 @@
       return isEconomicComplete() && state.econConfirm !== null;
     }
 
+    function isEntscheiderUnlocked() {
+      // Entscheider wird frei sobald Interesse frei ist (gleiche Bedingung wie früher Termin)
+      return isInterestUnlocked();
+    }
+
+    function isTerminUnlocked() {
+      // Termin wird frei sobald die Entscheiderfrage beantwortet wurde
+      return state.entscheiderAnswered === true;
+    }
+
     function updateTechCloseBox() {
       const wrap = $('techCloseWrap');
       if (!wrap) return;
@@ -2248,16 +2780,34 @@
       const economicQuestionUnlocked = isEconomicUnlocked();
       const economicStageUnlocked = isEconomicUnlocked() || state.manualStageOpen.economic;
       const interestUnlocked = isInterestUnlocked();
+      const entscheiderUnlocked = isEntscheiderUnlocked();
+      const terminUnlocked = isTerminUnlocked();
 
-      $('techIntroLock')?.classList.toggle('is-locked', !technicalUnlocked);
+      $('techIntroLock')?.classList.toggle('is-locked', !technicalUnlocked && !state.manualStageOpen.technical);
       $('technicalStage')?.classList.toggle('is-locked', !technicalStageUnlocked);
-      $('economicIntroLock')?.classList.toggle('is-locked', !economicQuestionUnlocked);
+      $('economicIntroLock')?.classList.toggle('is-locked', !economicQuestionUnlocked && !state.manualStageOpen.economic);
       $('economicStage')?.classList.toggle('is-locked', !economicStageUnlocked);
-      $('interestStage')?.classList.toggle('is-locked', !interestUnlocked);
-      $('objectionStage')?.classList.toggle('is-locked', !interestUnlocked);
-      $('termStage')?.classList.toggle('is-locked', !interestUnlocked);
-      $('step-4')?.classList.toggle('is-locked', !interestUnlocked);
-      $('step-5')?.classList.toggle('is-locked', !interestUnlocked);
+      $('interestStage')?.classList.toggle('is-locked', !interestUnlocked && !state.manualStageOpen.interest);
+      $('entscheiderStage')?.classList.toggle('is-locked', !entscheiderUnlocked && !state.manualStageOpen.entscheider);
+      $('objectionStage')?.classList.toggle('is-locked', false);
+      $('termStage')?.classList.toggle('is-locked', !terminUnlocked && !state.manualStageOpen.term);
+      $('step-4')?.classList.toggle('is-locked', false);
+      $('step-5')?.classList.toggle('is-locked', false);
+
+      // "Weiter zum Termin"-Button im entscheiderStage aktivieren, sobald beantwortet
+      const toTerminAfter = $('toTerminAfterEntscheiderBtn');
+      if (toTerminAfter) {
+        if (state.entscheiderAnswered) {
+          toTerminAfter.disabled = false;
+          toTerminAfter.style.opacity = '1';
+          toTerminAfter.style.cursor = 'pointer';
+        } else {
+          toTerminAfter.disabled = true;
+          toTerminAfter.style.opacity = '0.5';
+          toTerminAfter.style.cursor = 'not-allowed';
+        }
+      }
+
       updateTechCloseBox();
       updateEconCloseBox();
       updatePersistentPageAlert();
@@ -2269,8 +2819,8 @@
       if (step === 3) return $('technicalIntro');
       if (step === 4) return $('economicIntro');
       if (step === 5) return $('interestIntro');
-      if (step === 6) return $('objectionIntro');
-      if (step === 7) return $('termIntro');
+      if (step === 6) return $('termIntro');       // 6 = Termin (vorher: Einwände)
+      if (step === 7) return $('objectionIntro');  // 7 = Einwände (vorher: Termin)
       return null;
     }
 
@@ -2317,6 +2867,7 @@
         $('economicIntroLock'),
         $('econCloseWrap'),
         $('interestStage'),
+        $('entscheiderStage'),
         $('objectionStage'),
         $('termStage')
       ].filter(Boolean).filter((el) => getComputedStyle(el).display !== 'none');
@@ -2417,12 +2968,14 @@
       const heatSelect = $('heatSelectSummary');
       if (heatSelect) {
         const sourceMap = { gas: 'Gas', oil: 'Öl', other: 'Anderes' };
-        heatSelect.textContent = sourceMap[state.heatSource] || '—';
+        if (state.unknown?.heatSource) heatSelect.textContent = '— Kunde weiß nicht —';
+        else heatSelect.textContent = sourceMap[state.heatSource] || '—';
       }
       const pv = $('pvSummary');
       if (pv) {
         const pvMap = { yes: 'Ja', no: 'Nein', planned: 'In Planung' };
-        pv.textContent = pvMap[state.pvAnlage] || '—';
+        if (state.unknown?.pvAnlage) pv.textContent = '— Kunde weiß nicht —';
+        else pv.textContent = pvMap[state.pvAnlage] || '—';
       }
     }
 
@@ -2437,19 +2990,48 @@
     function updateTechSummaries() {
       updateSelectPairSummary();
       const building = $('buildingSummary');
-      if (building) building.textContent = `${state.buildingYear} · ${state.buildingSubtype}`;
+      if (building) {
+        if (state.unknown?.buildingYear) building.textContent = '— Kunde weiß Baujahr nicht —';
+        else building.textContent = `${state.buildingYear} · ${state.buildingSubtype}`;
+      }
       const size = $('sizeSummary');
-      if (size) size.textContent = `${formatNumberDE(state.houseSize)} qm · ${$('sizeCategoryValue')?.textContent || ''}`;
+      if (size) {
+        if (state.unknown?.houseSize) size.textContent = '— Kunde weiß Wohnfläche nicht —';
+        else size.textContent = `${formatNumberDE(state.houseSize)} qm · ${$('sizeCategoryValue')?.textContent || ''}`;
+      }
       const heat = $('heatSummary');
       if (heat) {
         const sourceMap = { gas: 'Gas', oil: 'Öl', other: 'Anderes' };
         let usage = 'nicht relevant';
         if (state.heatSource === 'gas') usage = `${formatNumberDE(state.heatUsage)} kWh / Jahr`;
         if (state.heatSource === 'oil') usage = `${formatNumberDE(state.heatUsage)} l / Jahr`;
-        heat.textContent = `${sourceMap[state.heatSource] || '—'} · ${usage}`;
+        if (state.unknown?.heatSource) heat.textContent = '— Kunde weiß nicht —';
+        else if (state.unknown?.heatUsage) heat.textContent = `${sourceMap[state.heatSource] || '—'} · — Verbrauch unbekannt —`;
+        else heat.textContent = `${sourceMap[state.heatSource] || '—'} · ${usage}`;
       }
       const power = $('powerSummary');
-      if (power) power.textContent = `${formatNumberDE(state.powerUsage)} kWh / Jahr`;
+      if (power) {
+        if (state.unknown?.powerUsage) power.textContent = '— Kunde weiß Stromverbrauch nicht —';
+        else power.textContent = `${formatNumberDE(state.powerUsage)} kWh / Jahr`;
+      }
+    }
+
+    function updateEconCostSummary(cost) {
+      if (!state.econCost) return;
+      const data = state.econCost[cost];
+      const el = document.getElementById(cost === 'heat' ? 'econHeatCostSummary' : 'econPowerCostSummary');
+      if (!el) return;
+      const scope = cost === 'heat' ? 'econHeatCost' : 'econPowerCost';
+      if (state.unknown?.[scope]) {
+        el.textContent = '— Kunde weiß nicht —';
+        return;
+      }
+      if (!data.value) {
+        el.textContent = '—';
+        return;
+      }
+      const periodLabel = data.period === 'month' ? '€ / Monat' : '€ / Jahr';
+      el.textContent = `${formatNumberDE(data.value)} ${periodLabel}`;
     }
 
     function lockTechCardHeight(sectionKey) {
@@ -2526,7 +3108,6 @@
 
     function getTechnicalQuestionText(key) {
       if (key === 'heat') {
-        if (state.thema === 'gv') return '„Wie viel Gas verbrauchen Sie im Jahr?“';
         if (state.heatSource === 'oil') return '„Wie viel Öl verbrauchen Sie im Jahr?“';
         if (state.heatSource === 'gas') return '„Wie viel Gas verbrauchen Sie im Jahr?“';
         return '„Wie viel verbrauchen Sie im Jahr?“';
@@ -2537,23 +3118,9 @@
         pv: '„Nutzen Sie schon die Sonnen Energie ?“',
         building: '„Wann wurde Ihr Haus gebaut?“',
         size: '„Und wie viel Wohnfläche haben Sie?“',
-        power: '„Wie viel Strom verbrauchen Sie im Jahr?“',
-        roof: '„Wie ist Ihr Dach ausgerichtet – eher Süd, Ost/West oder Nord?“',
-        provider: '„Bei welchem Anbieter sind Sie aktuell?“'
+        power: '„Wie viel Strom verbrauchen Sie im Jahr?“'
       };
       return map[key] || map.default;
-    }
-
-    const themaTopicWord = {
-      wp: 'die Wärmepumpe',
-      pv: 'eine PV-Anlage',
-      sv: 'einen Tarifwechsel beim Strom',
-      gv: 'einen Tarifwechsel beim Gas'
-    };
-
-    function getFirstVisibleTechQuestion() {
-      const visible = techQuestionsPerThema[state.thema] || techQuestionsPerThema.wp;
-      return visible[0] || 'heatSelect';
     }
 
     function isTechnicalStepComplete(key) {
@@ -2593,59 +3160,11 @@
       $('openingQuestion').classList.remove('hidden');
       if ($('step3Sub')) $('step3Sub').textContent = cfg.step3Sub;
       updateSayBoxText($('interestIntro'), cfg.interestIntro);
-      if (cfg.economicIntro) updateSayBoxText($('economicIntro'), cfg.economicIntro);
       showSpoken();
-      renderSecondaryTopics();
-      renderMotives();
-      state.motive.clear();
-      state.motiveConfirm = null;
-      state.lastMotive = null;
       resetTechnicalCheck();
-      applyThemaToTechQuestions();
-      applyThemaToEconQuestions();
       setTechnicalQuestion('building', false);
       updateMotiveFollowup();
       showObjectionGroup(cfg.defaultObjection);
-    }
-
-    function renderSecondaryTopics() {
-      const card = $('secondaryTopicsCard');
-      const list = $('secondaryTopicsList');
-      if (!card || !list) return;
-      const badge = card.querySelector('.badge');
-      const title = card.querySelector('.card-title');
-      const help = card.querySelector('.card-help');
-
-      let topics, badgeText, titleText, helpText;
-      if (state.pfad === 'empfehlung') {
-        const all = state.thema ? [state.thema, ...Array.from(state.secondaryThemen)] : Array.from(state.secondaryThemen);
-        topics = all;
-        badgeText = 'Themen-Interesse';
-        titleText = 'Vom Tippgeber gemeldete Themen';
-        helpText = 'So kommt der Kunde zu uns. Im Gespräch offen einsteigen, dann die genannten Themen aufgreifen.';
-      } else {
-        topics = Array.from(state.secondaryThemen);
-        badgeText = 'Auch ansprechen';
-        titleText = 'Neben dem Hauptthema kurz erwähnen';
-        helpText = 'Diese Themen hat der Kunde zusätzlich angegeben. Streu am Ende des Gesprächs 1–2 Sätze ein – nicht das Hauptthema verwässern.';
-      }
-
-      if (!topics.length) {
-        card.classList.add('hidden');
-        list.innerHTML = '';
-        return;
-      }
-
-      if (badge) badge.textContent = badgeText;
-      if (title) title.textContent = titleText;
-      if (help) help.textContent = helpText;
-
-      list.innerHTML = topics.map((key) => {
-        const label = themaLabels[key] || key;
-        const hint = secondaryHints[key] || '';
-        return `<div class="secondary-topic-item"><div class="secondary-topic-label">${label}</div><div class="secondary-topic-text">${hint}</div></div>`;
-      }).join('');
-      card.classList.remove('hidden');
     }
 
     function resetSpokenProgress() {
@@ -2725,99 +3244,57 @@
       window.scrollTo({ top: offset, behavior: 'smooth' });
     }
 
-    function setPfad(pfad, opts) {
-      opts = opts || {};
-      const switching = state.pfad !== pfad;
+    function setPfad(pfad) {
       state.pfad = pfad;
-      if (switching && !opts.keepTopics) {
-        state.thema = null;
-        state.secondaryThemen.clear();
-        resetTopicButtonStyling();
-      } else {
-        refreshTopicButtonStyling();
-      }
+      state.thema = null;
       $('pfad-lead').classList.remove('active');
       $('pfad-empfehlung').classList.remove('active');
       $('pfad-' + pfad).classList.add('active');
+      $$('.topic-btn').forEach((btn) => btn.classList.remove('active'));
+      // Thema-Auswahl immer anzeigen — auch bei Empfehlung
       $('themeCard').style.display = 'block';
-      updateThemeCardLabels();
-      if (switching && !opts.suppressScroll) {
-        requestAnimationFrame(() => scrollPrepTarget($('themeCard')));
-      }
-      updateStartButtonState();
+      requestAnimationFrame(() => scrollPrepTarget($('themeCard')));
       updateSummary();
       updateStageLocks();
     }
 
-    function updateThemeCardLabels() {
-      const card = $('themeCard');
-      if (!card) return;
-      const help = card.querySelector('.card-help');
-      const title = card.querySelector('.card-title');
-      if (state.pfad === 'empfehlung') {
-        if (title) title.textContent = 'Worum geht es im Gespräch? (optional)';
-        if (help) help.innerHTML = 'Bei Empfehlung optional. Falls der Tippgeber Themen genannt hat, sind sie bereits markiert. Du kannst sie übernehmen oder direkt mit "Gespräch starten" weitergehen.';
-      } else {
-        if (title) title.textContent = 'Worum geht es im Gespräch?';
-        if (help) help.innerHTML = 'Mehrfachauswahl möglich. <strong>Erstes ausgewähltes Thema = Haupt-Thema</strong> (steuert den Leitfaden). Weitere Themen werden im Gespräch nur kurz angesprochen.';
-      }
-    }
-
-    function resetTopicButtonStyling() {
-      $$('.topic-btn').forEach((btn) => {
-        btn.classList.remove('active', 'primary-topic', 'secondary-topic');
-        const tag = btn.querySelector('.topic-tag');
-        if (tag) tag.textContent = 'Thema wählen';
-      });
-    }
-
-    function refreshTopicButtonStyling() {
-      $$('.topic-btn').forEach((btn) => {
-        const topic = btn.dataset.topic;
-        btn.classList.remove('active', 'primary-topic', 'secondary-topic');
-        const tag = btn.querySelector('.topic-tag');
-        if (topic === state.thema) {
-          btn.classList.add('primary-topic');
-          if (tag) tag.textContent = '★ Haupt-Thema';
-        } else if (state.secondaryThemen.has(topic)) {
-          btn.classList.add('secondary-topic');
-          if (tag) tag.textContent = '+ auch ansprechen';
-        } else {
-          if (tag) tag.textContent = 'Thema wählen';
-        }
-      });
-    }
-
-    function updateStartButtonState() {
-      const btn = $('startGuideBtn');
+    function setTopic(topic) {
+      // Toggle-Logik: Klick auf aktives Topic deaktiviert es
+      const btn = $('topic-' + topic);
       if (!btn) return;
-      if (state.pfad === 'empfehlung') {
-        btn.disabled = false;
-      } else if (state.pfad === 'lead') {
-        btn.disabled = !state.thema;
-      } else {
-        btn.disabled = true;
-      }
-    }
+      btn.classList.toggle('active');
 
-    function toggleTopic(topic) {
-      if (state.thema === topic) {
-        const next = state.secondaryThemen.values().next().value || null;
-        if (next) {
-          state.secondaryThemen.delete(next);
-          state.thema = next;
-        } else {
-          state.thema = null;
-        }
-      } else if (state.secondaryThemen.has(topic)) {
-        state.secondaryThemen.delete(topic);
-      } else if (!state.thema) {
-        state.thema = topic;
+      const pvActive = $('topic-pv')?.classList.contains('active');
+      const wpActive = $('topic-wp')?.classList.contains('active');
+
+      if (pvActive && wpActive) {
+        state.thema = 'pvwp';
+      } else if (pvActive) {
+        state.thema = 'pv';
+      } else if (wpActive) {
+        state.thema = 'wp';
       } else {
-        state.secondaryThemen.add(topic);
+        state.thema = null;
       }
-      refreshTopicButtonStyling();
-      updateStartButtonState();
+
+      // "Weiter"-Button aktivieren/deaktivieren je nach Auswahl
+      const startBtn = $('startGuideBtn');
+      if (startBtn) {
+        if (state.thema) {
+          startBtn.disabled = false;
+          startBtn.style.opacity = '1';
+          startBtn.style.cursor = 'pointer';
+          if (state.thema === 'pvwp')      startBtn.textContent = 'Weiter mit PV + Wärmepumpe →';
+          else if (state.thema === 'pv')   startBtn.textContent = 'Weiter mit Photovoltaik →';
+          else if (state.thema === 'wp')   startBtn.textContent = 'Weiter mit Wärmepumpe →';
+        } else {
+          startBtn.disabled = true;
+          startBtn.style.opacity = '0.5';
+          startBtn.style.cursor = 'not-allowed';
+          startBtn.textContent = 'Weiter zum Leitfaden →';
+        }
+      }
+
       updateSummary();
     }
 
@@ -2827,8 +3304,8 @@
         alert('Bitte zuerst die Kontaktart auswählen.');
         return;
       }
-      if (state.pfad === 'lead' && !state.thema) {
-        alert('Bitte zusätzlich das Thema auswählen.');
+      if (!state.thema) {
+        alert('Bitte Thema auswählen: Photovoltaik, Wärmepumpe oder beide.');
         return;
       }
       applyGuide();
@@ -2843,178 +3320,27 @@
       $('rulesArrow').style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
     }
 
-    const motiveCatalog = {
-      gaskosten:     { icon: '💸', title: 'Hohe Energiekosten / Gas', text: '„Ich zahle so viel für Gas...“',
-                       question: 'hohe Energiekosten / Gas für Sie wichtig sind',
-                       close: 'Ihre Energiekosten senken' },
-      unabhaengig:   { icon: '🛡️', title: 'Unabhängigkeit', text: '„Ich will nicht mehr abhängig sein...“',
-                       question: 'Unabhängigkeit für Sie wichtig ist',
-                       close: 'mehr Unabhängigkeit schaffen' },
-      zukunft:       { icon: '⚖️', title: 'GEG / Zukunft', text: '„Ich habe gehört, dass sich gesetzlich etwas ändert...“',
-                       question: 'das Thema Zukunft / Gesetzeslage für Sie wichtig ist',
-                       close: 'für die Zukunft sauber aufgestellt sein' },
-      'heizung-alt': { icon: '🔧', title: 'Alte Heizung / Defekt', text: '„Meine Heizung ist alt / kaputt...“',
-                       question: 'der Zustand Ihrer aktuellen Heizung für Sie wichtig ist',
-                       close: 'die alte Heizung sinnvoll ersetzen' },
-      pv:            { icon: '☀️', title: 'Hat PV / will kombinieren', text: '„Ich habe schon eine PV-Anlage...“',
-                       question: 'die Kombination mit einer PV-Anlage für Sie wichtig ist',
-                       close: 'die PV sinnvoll mit der Wärmepumpe kombinieren' },
-      machbarkeit:   { icon: '🏠', title: 'Machbarkeit', text: '„Ich will erstmal wissen, ob das bei meinem Haus überhaupt geht...“',
-                       question: 'die Machbarkeit bei Ihrem Haus für Sie wichtig ist',
-                       close: 'die Machbarkeit bei Ihrem Haus sauber klären' },
-      foerderung:    { icon: '💶', title: 'Förderung', text: '„Mich interessiert, welche Förderung ich bekommen kann...“',
-                       question: 'das Thema Förderung für Sie wichtig ist',
-                       close: 'die passende Förderung für Sie nutzen' },
-      neubau:        { icon: '🏗️', title: 'Neubau / Sanierung', text: '„Wir bauen / sanieren gerade...“',
-                       question: 'Ihre Neubau- / Sanierungssituation für Sie wichtig ist',
-                       close: 'Ihre Neubau- / Sanierungssituation optimal nutzen' },
-      stromkosten:   { icon: '💸', title: 'Hohe Stromkosten', text: '„Mein Strom wird immer teurer...“',
-                       question: 'die hohen Stromkosten für Sie wichtig sind',
-                       close: 'Ihre Stromkosten dauerhaft senken' },
-      umwelt:        { icon: '🌱', title: 'Etwas für die Umwelt', text: '„Ich will einen Beitrag leisten...“',
-                       question: 'der Umweltgedanke für Sie wichtig ist',
-                       close: 'aktiv einen Beitrag zur Energiewende leisten' },
-      vergleich:     { icon: '🔍', title: 'Angebote vergleichen', text: '„Ich will einfach sehen was es gibt...“',
-                       question: 'ein fundierter Vergleich der Angebote für Sie wichtig ist',
-                       close: 'mit einem klaren Vergleich die beste Lösung finden' },
-      speicher:      { icon: '🔋', title: 'Speicher / Eigenverbrauch', text: '„Ich will meinen Strom selber nutzen...“',
-                       question: 'der Eigenverbrauch / Speicher für Sie wichtig ist',
-                       close: 'Ihren selbst erzeugten Strom maximal selbst nutzen' },
-      emobil:        { icon: '🚗', title: 'E-Mobilität / Wallbox', text: '„Ich fahre / plane elektrisch zu fahren...“',
-                       question: 'die Versorgung für Ihr E-Auto / die Wallbox für Sie wichtig ist',
-                       close: 'die Versorgung für Ihr E-Auto sauber aufstellen' },
-      strompreis:    { icon: '⚡', title: 'Strompreis zu hoch', text: '„Mein aktueller Stromtarif ist zu teuer...“',
-                       question: 'der aktuelle Strompreis für Sie zu hoch ist',
-                       close: 'einen wirklich günstigen Stromtarif finden' },
-      oekostrom:     { icon: '🌱', title: 'Auf Ökostrom wechseln', text: '„Ich möchte gerne Ökostrom...“',
-                       question: 'der Wechsel auf Ökostrom für Sie wichtig ist',
-                       close: 'sauber auf Ökostrom umstellen' },
-      anbieterproblem:{ icon: '😤', title: 'Probleme mit Anbieter', text: '„Mit meinem aktuellen Anbieter läuft was nicht...“',
-                       question: 'Sie mit dem aktuellen Anbieter Probleme haben',
-                       close: 'einen verlässlichen Anbieter finden, mit dem alles reibungslos läuft' },
-      bonusjagd:     { icon: '💶', title: 'Wechselbonus mitnehmen', text: '„Wenn da Bonus drin ist, gerne...“',
-                       question: 'der Wechselbonus für Sie attraktiv ist',
-                       close: 'den Wechselbonus für Sie sichern' },
-      gaspreis:      { icon: '💸', title: 'Gaspreis zu hoch', text: '„Mein Gas ist zu teuer geworden...“',
-                       question: 'der aktuelle Gaspreis für Sie zu hoch ist',
-                       close: 'einen wirklich günstigen Gastarif finden' },
-      biogas:        { icon: '🌱', title: 'Auf Biogas wechseln', text: '„Ich möchte gerne Biogas...“',
-                       question: 'der Wechsel auf Biogas für Sie wichtig ist',
-                       close: 'sauber auf Biogas umstellen' }
+    const motiveQuestionLabels = {
+      gaskosten: 'hohe Energiekosten / Gas für Sie wichtig sind',
+      unabhaengig: 'Unabhängigkeit für Sie wichtig ist',
+      zukunft: 'das Thema Zukunft / Gesetzeslage für Sie wichtig ist',
+      'heizung-alt': 'der Zustand Ihrer aktuellen Heizung für Sie wichtig ist',
+      pv: 'die Kombination mit einer PV-Anlage für Sie wichtig ist',
+      machbarkeit: 'die Machbarkeit bei Ihrem Haus für Sie wichtig ist',
+      foerderung: 'das Thema Förderung für Sie wichtig ist',
+      neubau: 'Ihre Neubau- / Sanierungssituation für Sie wichtig ist'
     };
 
-    const motivesPerThema = {
-      wp: ['gaskosten','unabhaengig','zukunft','heizung-alt','pv','machbarkeit','foerderung','neubau'],
-      pv: ['stromkosten','umwelt','vergleich','unabhaengig','speicher','foerderung','emobil','zukunft'],
-      sv: ['strompreis','vergleich','anbieterproblem','oekostrom','bonusjagd'],
-      gv: ['gaspreis','vergleich','anbieterproblem','biogas','bonusjagd']
+    const motiveCloseLabels = {
+      gaskosten: 'Ihre Energiekosten senken',
+      unabhaengig: 'mehr Unabhängigkeit schaffen',
+      zukunft: 'für die Zukunft sauber aufgestellt sein',
+      'heizung-alt': 'die alte Heizung sinnvoll ersetzen',
+      pv: 'die PV sinnvoll mit der Wärmepumpe kombinieren',
+      machbarkeit: 'die Machbarkeit bei Ihrem Haus sauber klären',
+      foerderung: 'die passende Förderung für Sie nutzen',
+      neubau: 'Ihre Neubau- / Sanierungssituation optimal nutzen'
     };
-
-    function getActiveMotiveKeys() {
-      if (state.thema && motivesPerThema[state.thema]) return motivesPerThema[state.thema];
-      return motivesPerThema.wp;
-    }
-
-    const techQuestionsPerThema = {
-      wp: ['heatSelect', 'pv', 'heat', 'power', 'building', 'size'],
-      pv: ['roof', 'pv', 'power', 'size'],
-      sv: ['power', 'provider'],
-      gv: ['heat', 'provider']
-    };
-
-    function applyThemaToTechQuestions() {
-      const all = ['heatSelect', 'pv', 'heat', 'power', 'building', 'size', 'roof', 'provider'];
-      const visible = techQuestionsPerThema[state.thema] || techQuestionsPerThema.wp;
-      all.forEach((key) => {
-        const card = document.querySelector(`[data-tech-question="${key}"]`);
-        if (!card) return;
-        if (visible.includes(key)) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-          state.techDone[key] = true;
-        }
-      });
-    }
-
-    function selectRoof(value, btn) {
-      state.roof = value;
-      state.techDone.roof = true;
-      $$('.roof-btn').forEach((b) => b.classList.remove('selected'));
-      if (btn) btn.classList.add('selected');
-      const labels = { south: '☀️ Süd', 'east-west': '🌅 Ost/West', north: '🧭 Nord', unknown: '🤷 Unbekannt' };
-      const summary = $('roofSummary');
-      if (summary) summary.textContent = labels[value] || '—';
-      updateStageLocks();
-    }
-
-    function handleProviderInput() {
-      const input = $('providerInput');
-      if (!input) return;
-      state.provider = input.value.trim();
-      state.techDone.provider = state.provider.length > 0;
-      const summary = $('providerSummary');
-      if (summary) summary.textContent = state.provider || '—';
-      updateStageLocks();
-    }
-
-    const econQuestionsPerThema = {
-      wp: ['econ-building', 'econ-size', 'econ-heat', 'econ-power'],
-      pv: ['econ-heat', 'econ-power'],
-      sv: ['econ-heat', 'econ-power'],
-      gv: ['econ-heat', 'econ-power']
-    };
-
-    const econHeatHeadLabels = {
-      wp: 'Heizkosten pro kWh',
-      pv: 'Strompreis pro kWh',
-      sv: 'Strompreis pro kWh',
-      gv: 'Gaspreis pro kWh'
-    };
-
-    const econPowerHeadLabels = {
-      wp: 'Stromverbrauch',
-      pv: 'Stromverbrauch',
-      sv: 'Stromverbrauch',
-      gv: 'Stromverbrauch (für Vergleich)'
-    };
-
-    function applyThemaToEconQuestions() {
-      const all = ['econ-building', 'econ-size', 'econ-heat', 'econ-power'];
-      const visible = econQuestionsPerThema[state.thema] || econQuestionsPerThema.wp;
-      const stateMap = { 'econ-building': 'building', 'econ-size': 'size', 'econ-heat': 'heat', 'econ-power': 'power' };
-      all.forEach((dataKey) => {
-        const card = document.querySelector(`[data-econ-question="${dataKey}"]`);
-        if (!card) return;
-        if (visible.includes(dataKey)) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-          const stateKey = stateMap[dataKey];
-          if (stateKey) state.econDone[stateKey] = true;
-        }
-      });
-      const thema = state.thema || 'wp';
-      const heatHead = $('econHeatCostHead');
-      if (heatHead) heatHead.textContent = econHeatHeadLabels[thema] || econHeatHeadLabels.wp;
-      const powerHead = $('econPowerHead');
-      if (powerHead) powerHead.textContent = econPowerHeadLabels[thema] || econPowerHeadLabels.wp;
-    }
-
-    function renderMotives() {
-      const grid = $('motiveGrid');
-      if (!grid) return;
-      const keys = getActiveMotiveKeys();
-      grid.innerHTML = keys.map((key) => {
-        const m = motiveCatalog[key];
-        if (!m) return '';
-        const isActive = state.motive.has(key) ? ' active' : '';
-        return `<button class="choice compact motive-btn${isActive}" type="button" data-motive="${key}"><div class="choice-icon">${m.icon}</div><div><div class="choice-title">${m.title}</div><div class="choice-text">${m.text}</div></div></button>`;
-      }).join('');
-    }
-
-    const motiveQuestionLabels = new Proxy({}, { get: (_, key) => motiveCatalog[key]?.question });
-    const motiveCloseLabels = new Proxy({}, { get: (_, key) => motiveCatalog[key]?.close });
 
     function updateMotiveCloseBox() {
       const wrap = $('motiveCloseWrap');
@@ -3043,7 +3369,7 @@
       updateStageLocks();
       if (answer === 'yes') {
         lockTechnicalQuestion(5000);
-        setTechnicalQuestion(getFirstVisibleTechQuestion(), true, true);
+        setTechnicalQuestion('heatSelect', true, true);
         showStep(3);
       }
     }
@@ -3065,8 +3391,7 @@
           ? state.lastMotive
           : Array.from(state.motive)[0];
         const motiveText = motiveQuestionLabels[activeKey] || 'dieser Punkt für Sie wichtig ist';
-        const topicWord = themaTopicWord[state.thema] || 'das Thema';
-        updateSayBoxText(opening, `„Ich verstehe, dass ${motiveText}. Gibt es denn weitere Gründe, die für ${topicWord} bei Ihnen sprechen?“`);
+        updateSayBoxText(opening, `„Ich verstehe, dass ${motiveText}. Gibt es denn weitere Gründe, die für die Wärmepumpe bei Ihnen sprechen?“`);
       } else {
         updateSayBoxText(opening, currentGuide().openingQuestion);
       }
@@ -3129,6 +3454,18 @@
     }
 
     function updateBuildingYear() {
+      // Falls "Weiß nicht" vorher gedrückt war, automatisch aufheben
+      if (state.unknown?.buildingYear) {
+        state.unknown.buildingYear = false;
+        const notizenEl = $('kunde-notizen');
+        const notiz = unknownConfig.buildingYear.notiz;
+        if (notizenEl && notizenEl.value.includes(notiz)) {
+          notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+        }
+        document.querySelectorAll('.unknown-btn[data-unknown="buildingYear"]').forEach((b) => b.classList.remove('selected'));
+        const slider = $('buildingYearSlider');
+        if (slider) slider.style.opacity = '';
+      }
       state.techDone.building = true;
       enableTechIdle('building');
       state.buildingYear = Number($('buildingYearSlider').value);
@@ -3180,6 +3517,18 @@
     }
 
     function updateSizeSlider() {
+      // Falls "Weiß nicht" vorher gedrückt war, automatisch aufheben
+      if (state.unknown?.houseSize) {
+        state.unknown.houseSize = false;
+        const notizenEl = $('kunde-notizen');
+        const notiz = unknownConfig.houseSize.notiz;
+        if (notizenEl && notizenEl.value.includes(notiz)) {
+          notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+        }
+        document.querySelectorAll('.unknown-btn[data-unknown="houseSize"]').forEach((b) => b.classList.remove('selected'));
+        const slider = $('sizeSlider');
+        if (slider) slider.style.opacity = '';
+      }
       state.techDone.size = true;
       enableTechIdle('size');
       state.houseSize = Number($('sizeSlider').value);
@@ -3238,15 +3587,16 @@
         setText('econHeatUsageMax', '0,50 €');
         setText('econHeatUsageValue', `${formatCurrencyDE(Number(slider.value))} € / kWh`);
       } else {
-        state.econHeatUnitCost = 0;
+        // 'other': Pellets / Holz / Fernwärme – Standardpreis pro kWh, anpassbar
+        if (!(state.econHeatUnitCost >= 0 && state.econHeatUnitCost <= 0.5)) state.econHeatUnitCost = 0.10;
         slider.min = '0';
-        slider.max = '3';
+        slider.max = '0.5';
         slider.step = '0.01';
-        slider.value = '0';
-        if (head) head.textContent = 'Kosten pro Einheit';
+        slider.value = String(state.econHeatUnitCost);
+        if (head) head.textContent = 'Kosten pro kWh';
         setText('econHeatUsageMin', '0,00 €');
-        setText('econHeatUsageMax', '3,00 €');
-        setText('econHeatUsageValue', 'Nicht relevant');
+        setText('econHeatUsageMax', '0,50 €');
+        setText('econHeatUsageValue', `${formatCurrencyDE(Number(slider.value))} € / kWh`);
       }
     }
 
@@ -3285,16 +3635,16 @@
         note.textContent = 'Automatisch aus Wohnfläche × Kennwert berechnet.';
         value.textContent = `${formatNumberDE(Number(slider.value))} kWh / Jahr`;
       } else {
+        // 'other' = Pellets, Holz, Fernwärme, Wärmepumpe-Bestand etc. → Eingabe erlauben
         slider.min = '0';
         slider.max = '45000';
         slider.step = '500';
-        slider.value = '0';
-        slider.disabled = true;
-        min.textContent = '0';
-        max.textContent = '—';
-        note.textContent = 'Für andere Heizsysteme ist hier kein Verbrauchs-Schieber nötig.';
-        value.textContent = 'Nicht relevant';
-        detail.classList.add('is-disabled');
+        if (state.heatUsage == null || state.heatUsage > 45000) state.heatUsage = 0;
+        slider.value = String(state.heatUsage || 0);
+        min.textContent = '0 kWh';
+        max.textContent = '45.000 kWh';
+        note.textContent = 'Wärmeverbrauch pro Jahr (z. B. Pellets/Holz/Fernwärme in kWh).';
+        value.textContent = `${formatNumberDE(Number(slider.value))} kWh / Jahr`;
       }
       syncHeatSourceButtons();
       updateTechSummaries();
@@ -3302,6 +3652,18 @@
     }
 
     function updateHeatUsageSlider() {
+      // Falls "Weiß nicht" vorher gedrückt war, automatisch aufheben
+      if (state.unknown?.heatUsage) {
+        state.unknown.heatUsage = false;
+        const notizenEl = $('kunde-notizen');
+        const notiz = unknownConfig.heatUsage.notiz;
+        if (notizenEl && notizenEl.value.includes(notiz)) {
+          notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+        }
+        document.querySelectorAll('.unknown-btn[data-unknown="heatUsage"]').forEach((b) => b.classList.remove('selected'));
+        const slider = $('heatUsageSlider');
+        if (slider) slider.style.opacity = '';
+      }
       state.techDone.heat = true;
       enableTechIdle('heat');
       const slider = $('heatUsageSlider');
@@ -3317,19 +3679,13 @@
     function resetTechnicalCheck() {
       state.manualStageOpen.technical = false;
       state.manualStageOpen.economic = false;
+      state.manualStageOpen.interest = false;
+      state.manualStageOpen.objection = false;
+      state.manualStageOpen.term = false;
       state.techConfirm = null;
       state.econConfirm = null;
-      state.techDone = { heatSelect: false, pv: false, building: false, size: false, heat: false, power: false, roof: false, provider: false };
-      state.econDone = { building: false, size: false, heat: false, power: false };
-      state.roof = null;
-      state.provider = '';
-      const providerInput = $('providerInput');
-      if (providerInput) providerInput.value = '';
-      $$('.roof-btn').forEach((btn) => btn.classList.remove('selected'));
-      const roofSummary = $('roofSummary');
-      if (roofSummary) roofSummary.textContent = '—';
-      const providerSummary = $('providerSummary');
-      if (providerSummary) providerSummary.textContent = '—';
+      state.techDone = { heatSelect: false, pv: false, building: false, size: false, heat: false, power: false };
+      state.econDone = { building: true, size: true, heat: false, power: false };
       state.buildingType = 'altbau';
       state.buildingSubtype = 'Nach 3. WSchVO';
       state.buildingKwhPerSqm = 100;
@@ -3388,7 +3744,19 @@
     }
 
     function selectHeatSource(source, btn) {
+      // Falls "Weiß nicht" vorher gedrückt war, automatisch aufheben
+      if (state.unknown?.heatSource) {
+        state.unknown.heatSource = false;
+        const notizenEl = $('kunde-notizen');
+        const notiz = unknownConfig.heatSource.notiz;
+        if (notizenEl && notizenEl.value.includes(notiz)) {
+          notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+        }
+        document.querySelectorAll('.unknown-btn[data-unknown="heatSource"]').forEach((b) => b.classList.remove('selected'));
+      }
       state.techDone.heatSelect = true;
+      // Bei 'other': keine Verbrauchsabfrage nötig, also direkt auch heat=true
+      // Bei Gas/Öl: Vertriebler muss Verbrauchsslider bewegen (oder ? klicken)
       state.techDone.heat = source === 'other' ? true : false;
       enableTechIdle('heatSelect');
       state.heatSource = source;
@@ -3405,6 +3773,16 @@
     }
 
     function selectPv(value, btn) {
+      // Falls "Weiß nicht" vorher gedrückt war, automatisch aufheben
+      if (state.unknown?.pvAnlage) {
+        state.unknown.pvAnlage = false;
+        const notizenEl = $('kunde-notizen');
+        const notiz = unknownConfig.pvAnlage.notiz;
+        if (notizenEl && notizenEl.value.includes(notiz)) {
+          notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+        }
+        document.querySelectorAll('.unknown-btn[data-unknown="pvAnlage"]').forEach((b) => b.classList.remove('selected'));
+      }
       state.techDone.pv = true;
       enableTechIdle('pv');
       state.pvAnlage = value;
@@ -3418,6 +3796,195 @@
       updateStageLocks();
       advanceTechnicalQuestion(true);
     }
+
+    // ═══════════════════════════════════════════════════════════════
+    // "Weiß nicht"-Handler: markiert Schritt als erledigt, schreibt
+    // "Kunde weiß nicht" in Summary und Notizen.
+    // ═══════════════════════════════════════════════════════════════
+    const unknownConfig = {
+      motive: {
+        label: 'Motive',
+        notiz: 'Motive: Kunde konnte kein konkretes Motiv nennen — im Termin erfragen'
+      },
+      heatSource: {
+        label: 'Heizquelle',
+        notiz: 'Heizquelle: Kunde weiß nicht, wie geheizt wird — im Termin erfragen'
+      },
+      pvAnlage: {
+        label: 'PV-Anlage',
+        notiz: 'PV-Anlage: Kunde weiß nicht, ob vorhanden — im Termin klären'
+      },
+      heatUsage: {
+        label: 'Heizungsverbrauch',
+        notiz: 'Heizungsverbrauch: Kunde kennt kWh/Jahr nicht — im Termin erfragen'
+      },
+      powerUsage: {
+        label: 'Stromverbrauch',
+        notiz: 'Stromverbrauch: Kunde kennt kWh/Jahr nicht — im Termin erfragen'
+      },
+      buildingYear: {
+        label: 'Baujahr',
+        notiz: 'Baujahr: Kunde kennt Baujahr nicht — im Termin erfragen'
+      },
+      houseSize: {
+        label: 'Wohnfläche',
+        notiz: 'Wohnfläche: Kunde kennt qm nicht — im Termin erfragen'
+      },
+      econHeatCost: {
+        label: 'Heizkosten',
+        notiz: 'Heizkosten: Kunde kennt Jahres-/Monatskosten nicht — im Termin erfragen'
+      },
+      econPowerCost: {
+        label: 'Stromkosten',
+        notiz: 'Stromkosten: Kunde kennt Jahres-/Monatskosten nicht — im Termin erfragen'
+      }
+    };
+
+    function handleUnknown(scope, btn) {
+      const cfg = unknownConfig[scope];
+      if (!cfg) return;
+
+      state.unknown = state.unknown || {};
+      const wasActive = state.unknown[scope] === true;
+
+      // ─── TOGGLE: Wenn schon aktiv, deaktiviere alles ──────────────
+      if (wasActive) {
+        state.unknown[scope] = false;
+        if (btn) btn.classList.remove('selected');
+
+        // Notiz-Zeile wieder entfernen
+        const notizenEl = $('kunde-notizen');
+        if (notizenEl && notizenEl.value.includes(cfg.notiz)) {
+          notizenEl.value = notizenEl.value
+            .split('\n')
+            .filter((line) => line.trim() !== cfg.notiz)
+            .join('\n')
+            .trim();
+        }
+
+        // Scope-spezifisch zurücksetzen
+        if (scope === 'heatSource') {
+          state.techDone.heatSelect = false;
+          state.techDone.heat = false;
+        } else if (scope === 'pvAnlage') {
+          state.techDone.pv = false;
+        } else if (scope === 'buildingYear') {
+          state.techDone.building = false;
+          const slider = $('buildingYearSlider');
+          if (slider) slider.style.opacity = '';
+        } else if (scope === 'houseSize') {
+          state.techDone.size = false;
+          const slider = $('sizeSlider');
+          if (slider) slider.style.opacity = '';
+        } else if (scope === 'heatUsage') {
+          state.techDone.heat = false;
+          const slider = $('heatUsageSlider');
+          if (slider) slider.style.opacity = '';
+        } else if (scope === 'powerUsage') {
+          state.techDone.power = false;
+          const slider = $('powerUsageSlider');
+          if (slider) slider.style.opacity = '';
+        } else if (scope === 'econHeatCost') {
+          state.econDone.heat = false;
+          const input = $('econHeatCostInput');
+          const slider = $('econHeatCostSlider');
+          if (input)  { input.style.opacity = '';  input.disabled = false;  input.classList.remove('is-filled-locked'); }
+          if (slider) { slider.style.opacity = ''; slider.disabled = false; }
+          updateEconCostSummary('heat');
+        } else if (scope === 'econPowerCost') {
+          state.econDone.power = false;
+          const input = $('econPowerCostInput');
+          const slider = $('econPowerCostSlider');
+          if (input)  { input.style.opacity = '';  input.disabled = false;  input.classList.remove('is-filled-locked'); }
+          if (slider) { slider.style.opacity = ''; slider.disabled = false; }
+          updateEconCostSummary('power');
+        } else if (scope === 'motive') {
+          state.entryDone = false;
+        }
+
+        updateTechSummaries();
+        updateSummary();
+        updateStageLocks();
+        return;
+      }
+
+      // ─── ANSCHALTEN: Wie gehabt ───────────────────────────────────
+      if (scope === 'heatSource') {
+        $$('.heat-source-btn').forEach((b) => b.classList.remove('selected'));
+      } else if (scope === 'pvAnlage') {
+        $$('.pv-btn').forEach((b) => b.classList.remove('selected'));
+      } else if (scope === 'motive') {
+        $$('.motive-btn').forEach((b) => b.classList.remove('active'));
+        state.motive.clear();
+      }
+
+      if (btn) btn.classList.add('selected');
+
+      const notizenEl = $('kunde-notizen');
+      if (notizenEl && !notizenEl.value.includes(cfg.notiz)) {
+        notizenEl.value = notizenEl.value ? notizenEl.value + '\n' + cfg.notiz : cfg.notiz;
+      }
+
+      state.unknown[scope] = true;
+
+      if (scope === 'heatSource') {
+        state.techDone.heatSelect = true;
+        state.techDone.heat = true;
+        enableTechIdle('heatSelect');
+        state.heatSource = null;
+        advanceTechnicalQuestion(true);
+      } else if (scope === 'pvAnlage') {
+        state.techDone.pv = true;
+        enableTechIdle('pv');
+        state.pvAnlage = null;
+        advanceTechnicalQuestion(true);
+      } else if (scope === 'buildingYear') {
+        state.techDone.building = true;
+        enableTechIdle('building');
+        const slider = $('buildingYearSlider');
+        if (slider) slider.style.opacity = '0.4';
+        advanceTechnicalQuestion(true);
+      } else if (scope === 'houseSize') {
+        state.techDone.size = true;
+        enableTechIdle('size');
+        const slider = $('sizeSlider');
+        if (slider) slider.style.opacity = '0.4';
+        advanceTechnicalQuestion(true);
+      } else if (scope === 'heatUsage') {
+        state.techDone.heat = true;
+        enableTechIdle('heat');
+        const slider = $('heatUsageSlider');
+        if (slider) slider.style.opacity = '0.4';
+        advanceTechnicalQuestion(true);
+      } else if (scope === 'powerUsage') {
+        state.techDone.power = true;
+        enableTechIdle('power');
+        const slider = $('powerUsageSlider');
+        if (slider) slider.style.opacity = '0.4';
+        advanceTechnicalQuestion(true);
+      } else if (scope === 'econHeatCost') {
+        state.econDone.heat = true;
+        const input = $('econHeatCostInput');
+        const slider = $('econHeatCostSlider');
+        if (input)  { input.value = '';   input.style.opacity = '0.4';  input.disabled = true;  input.classList.remove('is-filled-locked'); }
+        if (slider) { slider.value = '0'; slider.style.opacity = '0.4'; slider.disabled = true; }
+        updateEconCostSummary('heat');
+      } else if (scope === 'econPowerCost') {
+        state.econDone.power = true;
+        const input = $('econPowerCostInput');
+        const slider = $('econPowerCostSlider');
+        if (input)  { input.value = '';   input.style.opacity = '0.4';  input.disabled = true;  input.classList.remove('is-filled-locked'); }
+        if (slider) { slider.value = '0'; slider.style.opacity = '0.4'; slider.disabled = true; }
+        updateEconCostSummary('power');
+      } else if (scope === 'motive') {
+        state.entryDone = true;
+      }
+
+      updateTechSummaries();
+      updateSummary();
+      updateStageLocks();
+    }
+    // ═══════════════════════════════════════════════════════════════
 
     function updatePowerUsage() {
       const slider = $('powerUsageSlider');
@@ -3514,16 +4081,39 @@
     }
 
     function updateInterest() {
-      const map = {
-        gaskosten: state.tags.has('hohe-gaskosten') || state.motive.has('gaskosten'),
+      // Welches Motiv triggert welche Interesse-Karte
+      const motiveToCard = {
+        gaskosten: 'gaskosten',
+        unabhaengig: 'unabhaengig',
+        zukunft: 'geg',              // "GEG / Zukunft" → interest-geg
+        'heizung-alt': 'heizung-alt',
+        pv: 'pv',
+        machbarkeit: 'machbarkeit',
+        foerderung: 'foerderung',
+        neubau: 'neubau'
+      };
+
+      // Zusätzliche Trigger aus Tags (wenn über anderen Weg gesetzt, z.B. PV vorhanden)
+      const cardVisible = {
+        gaskosten: state.motive.has('gaskosten') || state.tags.has('hohe-gaskosten'),
         pv: state.motive.has('pv') || state.tags.has('pv-vorhanden'),
         unabhaengig: state.motive.has('unabhaengig'),
-        foerderung: true,
-        geg: state.tags.has('geg') || state.motive.has('zukunft'),
-        neubau: state.tags.has('neubau') || state.motive.has('neubau')
+        foerderung: state.motive.has('foerderung'),
+        geg: state.motive.has('zukunft') || state.tags.has('geg'),
+        neubau: state.motive.has('neubau') || state.tags.has('neubau'),
+        'heizung-alt': state.motive.has('heizung-alt'),
+        machbarkeit: state.motive.has('machbarkeit')
       };
+
+      // Fallback: Wenn kein Motiv gewählt (z.B. "Kunde nennt kein Motiv"),
+      // alle Karten zeigen — damit der Vertriebler flexibel argumentieren kann
+      const noMotiveSelected = state.motive.size === 0;
+      if (noMotiveSelected) {
+        Object.keys(cardVisible).forEach((k) => { cardVisible[k] = true; });
+      }
+
       let shown = 0;
-      Object.entries(map).forEach(([key, visible]) => {
+      Object.entries(cardVisible).forEach(([key, visible]) => {
         const el = $('interest-' + key);
         if (!el) return;
         el.classList.toggle('visible', visible);
@@ -3531,7 +4121,9 @@
       });
       if ($('interestHint')) {
         $('interestHint').textContent = shown > 0
-          ? 'Es werden jetzt nur die Argumente angezeigt, die zur Situation des Kunden passen.'
+          ? (noMotiveSelected
+              ? 'Kein konkretes Motiv genannt — alle Argumente sichtbar. Wähle die passenden aus.'
+              : 'Nur die Argumente passend zu den genannten Motiven werden angezeigt.')
           : '← Erst Kundensituation in der Qualifizierung anklicken – dann erscheinen hier die passenden Argumente.';
       }
       updateObjections();
@@ -3550,7 +4142,7 @@
       };
       const motives = Array.from(state.motive).map((m) => labels[m]).filter(Boolean);
       if (!motives.length) {
-        $('closingText').textContent = '„Sie haben ja selbst gesagt, dass [Grund 1], [Grund 2] und [Grund 3] für Sie wichtig sind. Und genau deshalb macht es Sinn, dass wir uns das einmal sauber bei Ihnen anschauen.“';
+        $('closingText').textContent = '„Wir haben ja besprochen, dass Sie sich für eine moderne, effiziente Lösung interessieren. Und genau deshalb macht es Sinn, dass wir uns das einmal sauber bei Ihnen anschauen.“';
         return;
       }
       const joined = motives.length === 1 ? motives[0] : motives.length === 2 ? motives[0] + ' und ' + motives[1] : motives.slice(0, -1).join(', ') + ' und ' + motives[motives.length - 1];
@@ -3580,17 +4172,46 @@
     }
 
     function updateTermSelection() {
-      const select = $('termSelect');
-      if (!select) return;
-      const value = select.value;
-      const terminInput = $('kunde-termin');
-      if (terminInput) terminInput.value = value;
-      state.kundenDaten.termin = value;
+      const datum = $('terminDatum')?.value || '';
+      const uhrzeit = $('terminUhrzeit')?.value || '';
 
-      const line = document.querySelector('#termStage [data-term="4"] .term-text');
+      // Formatieren: "Dienstag, 29. April · 14:30 Uhr"
+      let formatted = '';
+      if (datum) {
+        const d = new Date(datum + 'T00:00:00');
+        if (!isNaN(d.getTime())) {
+          const wochentage = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+          const monate = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+          const wt = wochentage[d.getDay()];
+          const tag = d.getDate();
+          const monat = monate[d.getMonth()];
+          formatted = `${wt}, ${tag}. ${monat}`;
+        }
+      }
+      if (uhrzeit) {
+        formatted += formatted ? ` · ${uhrzeit} Uhr` : `${uhrzeit} Uhr`;
+      }
+
+      const terminInput = $('kunde-termin');
+      if (terminInput) terminInput.value = formatted;
+      state.kundenDaten.termin = formatted;
+
+      // Vorschau unter den Eingabefeldern
+      const preview = $('terminPreview');
+      if (preview) {
+        if (formatted) {
+          preview.style.display = 'block';
+          preview.textContent = `✓ Termin: ${formatted}`;
+        } else {
+          preview.style.display = 'none';
+        }
+      }
+
+      // Step 3 Text mit aktuellem Termin füllen
+      const line = $('termStep3Text');
       if (line) {
-        line.textContent = value
-          ? `„Perfekt, dann notiere ich Ihnen ${value}. Sie bekommen dazu noch eine kurze Bestätigung.“`
+        line.textContent = formatted
+          ? `„Perfekt, dann notiere ich Ihnen ${formatted}. Sie bekommen dazu noch eine kurze Bestätigung.“`
           : '„Perfekt, dann notiere ich Ihnen [Termin]. Sie bekommen dazu noch eine kurze Bestätigung.“';
       }
       updateSummary();
@@ -3669,10 +4290,49 @@
         requestAnimationFrame(() => scrollSayIntoView($('economicStage')));
         return;
       }
+      if (stageId === 'interest') {
+        state.manualStageOpen.interest = true;
+        updateStageLocks();
+        if (state.mode === 'guide') updateProgress(5);
+        requestAnimationFrame(() => scrollSayIntoView($('interestStage')));
+        return;
+      }
+      if (stageId === 'entscheider') {
+        state.manualStageOpen.entscheider = true;
+        updateStageLocks();
+        if (state.mode === 'guide') updateProgress(6);
+        requestAnimationFrame(() => scrollSayIntoView($('entscheiderStage')));
+        return;
+      }
+      if (stageId === 'term') {
+        state.manualStageOpen.term = true;
+        updateStageLocks();
+        if (state.mode === 'guide') updateProgress(6);
+        requestAnimationFrame(() => scrollSayIntoView($('termStage')));
+        return;
+      }
+      if (stageId === 'objection') {
+        state.manualStageOpen.objection = true;
+        updateStageLocks();
+        if (state.mode === 'guide') updateProgress(7);
+        requestAnimationFrame(() => scrollSayIntoView($('objectionStage')));
+        return;
+      }
     }
 
     function bindLockWarnings() {
-      [['techIntroLock','technical'], ['technicalStage','technical'], ['economicIntroLock','economic'], ['economicStage','economic']].forEach(([id, stageId]) => {
+      [
+        ['techIntroLock','technical'],
+        ['technicalStage','technical'],
+        ['economicIntroLock','economic'],
+        ['economicStage','economic'],
+        ['interestStage','interest'],
+        ['entscheiderStage','entscheider'],
+        ['termStage','term'],
+        ['objectionStage','objection'],
+        ['step-4','objection'],
+        ['step-5','term']
+      ].forEach(([id, stageId]) => {
         const el = $(id);
         if (!el) return;
         el.addEventListener('click', (event) => {
@@ -3689,15 +4349,39 @@
           event.stopPropagation();
 
           const stageLock = overlay.closest('.stage-lock');
+          const section = overlay.closest('.section');
           const message = overlay.textContent.trim() || 'Bitte zuerst die vorherigen Schritte ausfüllen.';
 
           if (stageLock?.id === 'techIntroLock' || stageLock?.id === 'technicalStage') {
             openLockedStageManually('technical');
             return;
           }
-
           if (stageLock?.id === 'economicIntroLock' || stageLock?.id === 'economicStage') {
             openLockedStageManually('economic');
+            return;
+          }
+          if (stageLock?.id === 'interestStage') {
+            openLockedStageManually('interest');
+            return;
+          }
+          if (stageLock?.id === 'entscheiderStage') {
+            openLockedStageManually('entscheider');
+            return;
+          }
+          if (stageLock?.id === 'termStage') {
+            openLockedStageManually('term');
+            return;
+          }
+          if (stageLock?.id === 'objectionStage') {
+            openLockedStageManually('objection');
+            return;
+          }
+          if (section?.id === 'step-4') {
+            openLockedStageManually('objection');
+            return;
+          }
+          if (section?.id === 'step-5') {
+            openLockedStageManually('term');
             return;
           }
 
@@ -3708,7 +4392,140 @@
 
     function buildExportHtml() {
       updateSummary();
-      return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>EnergyEngel Gesprächsprotokoll</title><style>body{font-family:Arial,sans-serif;padding:32px;color:#1b1f1c;line-height:1.5}h1{font-size:28px;margin:0 0 8px}h2{font-size:16px;margin:28px 0 10px;text-transform:uppercase;letter-spacing:.08em;color:#295c3b}.meta{color:#5d6b62;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}.item{padding:10px 12px;border:1px solid #d9e2dc;border-radius:8px}.label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#5d6b62;margin-bottom:4px}.value{font-size:15px}.full{grid-column:1 / -1}.note{padding:14px 16px;background:#f4f7f5;border-left:4px solid #295c3b;border-radius:8px}</style></head><body><h1>EnergyEngel Gesprächsprotokoll</h1><div class="meta">Erstellt aus dem Telefonleitfaden</div><h2>Kundendaten</h2><div class="grid"><div class="item"><div class="label">Name</div><div class="value">${valueOrDash(state.kundenDaten.name)}</div></div><div class="item"><div class="label">Telefon</div><div class="value">${valueOrDash(state.kundenDaten.telefon)}</div></div><div class="item"><div class="label">E-Mail</div><div class="value">${valueOrDash(state.kundenDaten.email)}</div></div><div class="item"><div class="label">Ort / Adresse</div><div class="value">${valueOrDash(state.kundenDaten.ort)}</div></div><div class="item"><div class="label">Kontaktart</div><div class="value">${getPfadLabel()}</div></div><div class="item"><div class="label">Thema</div><div class="value">${getThemaLabel()}</div></div><div class="item"><div class="label">Geplanter Termin</div><div class="value">${valueOrDash(state.kundenDaten.termin)}</div></div><div class="item"><div class="label">Berater</div><div class="value">${valueOrDash(state.kundenDaten.berater)}</div></div><div class="item full"><div class="label">Notizen</div><div class="value">${valueOrDash(state.kundenDaten.notizen)}</div></div></div><h2>Vorwegabschluss</h2><div class="note">${$('closingText').textContent}</div></body></html>`;
+
+      // Helper: Motive-Labels
+      const motiveLabels = {
+        gaskosten: 'Hohe Energiekosten / Gas',
+        unabhaengig: 'Unabhängigkeit',
+        zukunft: 'GEG / Zukunft',
+        'heizung-alt': 'Alte Heizung / Defekt',
+        pv: 'Hat PV / will kombinieren',
+        machbarkeit: 'Machbarkeit',
+        foerderung: 'Förderung',
+        neubau: 'Neubau / Sanierung'
+      };
+      const motiveList = Array.from(state.motive || []).map((m) => motiveLabels[m] || m);
+      const motiveText = state.unknown?.motive
+        ? '— Kunde konnte kein konkretes Motiv nennen —'
+        : (motiveList.length ? motiveList.join(', ') : '—');
+
+      // Technik
+      const heatSourceLabels = { gas: '🔥 Gas', oil: '🛢️ Öl', other: '🌿 Anderes' };
+      const heatSource = state.unknown?.heatSource
+        ? '— Kunde weiß nicht —'
+        : (heatSourceLabels[state.heatSource] || '—');
+      const pvLabels = { yes: '☀️ Ja', no: '— Nein', planned: '🗓️ In Planung' };
+      const pvAnlage = state.unknown?.pvAnlage
+        ? '— Kunde weiß nicht —'
+        : (pvLabels[state.pvAnlage] || '—');
+      const heatUsage = state.unknown?.heatUsage
+        ? '— Kunde weiß nicht —'
+        : (state.heatSource === 'oil'
+            ? `${formatNumberDE(state.heatUsage)} l / Jahr`
+            : `${formatNumberDE(state.heatUsage)} kWh / Jahr`);
+      const powerUsage = state.unknown?.powerUsage
+        ? '— Kunde weiß nicht —'
+        : `${formatNumberDE(state.powerUsage)} kWh / Jahr`;
+      const buildingYear = state.unknown?.buildingYear
+        ? '— Kunde weiß nicht —'
+        : `${state.buildingYear} (${state.buildingSubtype})`;
+      const houseSize = state.unknown?.houseSize
+        ? '— Kunde weiß nicht —'
+        : `${formatNumberDE(state.houseSize)} qm`;
+
+      // Wirtschaft
+      const formatCost = (cost) => {
+        const scope = cost === 'heat' ? 'econHeatCost' : 'econPowerCost';
+        if (state.unknown?.[scope]) return '— Kunde weiß nicht —';
+        const data = state.econCost?.[cost];
+        if (!data?.value) return '—';
+        return `${formatNumberDE(data.value)} € / ${data.period === 'month' ? 'Monat' : 'Jahr'}`;
+      };
+      const heizkosten = formatCost('heat');
+      const stromkosten = formatCost('power');
+
+      // Entscheider
+      const entscheiderBtn = document.querySelector('.entscheider-btn.selected');
+      let entscheiderText = '—';
+      if (entscheiderBtn) {
+        const val = entscheiderBtn.dataset.entscheider;
+        if (val === 'yes') entscheiderText = 'Nur der Kunde entscheidet';
+        else if (val === 'no') {
+          const extra = document.getElementById('entscheiderExtra')?.value?.trim();
+          entscheiderText = extra ? `Weitere Entscheider: ${extra}` : 'Es gibt weitere Entscheider (nicht näher benannt)';
+        }
+      }
+
+      // Termin
+      const termin = valueOrDash(state.kundenDaten.termin);
+
+      const css = `
+        body{font-family:Arial,sans-serif;padding:32px;color:#1b1f1c;line-height:1.5;max-width:800px;margin:0 auto}
+        h1{font-size:28px;margin:0 0 6px;color:#1b4d2e}
+        h2{font-size:15px;margin:26px 0 10px;text-transform:uppercase;letter-spacing:.08em;color:#295c3b;border-bottom:2px solid #d9e2dc;padding-bottom:4px}
+        .meta{color:#5d6b62;margin-bottom:24px;font-size:13px}
+        .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-bottom:4px}
+        .item{padding:10px 12px;border:1px solid #d9e2dc;border-radius:8px;background:#fbfcfb}
+        .label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#5d6b62;margin-bottom:4px}
+        .value{font-size:14px;color:#1b1f1c}
+        .full{grid-column:1 / -1}
+        .note{padding:14px 16px;background:#f4f7f5;border-left:4px solid #295c3b;border-radius:8px;font-size:14px;white-space:pre-wrap}
+        .note-accent{padding:14px 16px;background:#fff5f0;border-left:4px solid #e24b4a;border-radius:8px;font-size:14px}
+        .footer{margin-top:40px;padding-top:16px;border-top:1px solid #d9e2dc;color:#8a9990;font-size:11px;text-align:center}
+        @media print { body { padding: 20px; } }
+      `;
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' · ' +
+                       now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+
+      return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>EnergyEngel Gesprächsprotokoll</title><style>${css}</style></head><body>
+<h1>EnergyEngel Gesprächsprotokoll</h1>
+<div class="meta">Erstellt am ${dateStr} · Berater: ${valueOrDash(state.kundenDaten.berater)}</div>
+
+<h2>Kundendaten</h2>
+<div class="grid">
+  <div class="item"><div class="label">Name</div><div class="value">${valueOrDash(state.kundenDaten.name)}</div></div>
+  <div class="item"><div class="label">Telefon</div><div class="value">${valueOrDash(state.kundenDaten.telefon)}</div></div>
+  <div class="item"><div class="label">E-Mail</div><div class="value">${valueOrDash(state.kundenDaten.email)}</div></div>
+  <div class="item"><div class="label">Ort / Adresse</div><div class="value">${valueOrDash(state.kundenDaten.ort)}</div></div>
+  <div class="item"><div class="label">Kontaktart</div><div class="value">${getPfadLabel()}</div></div>
+  <div class="item"><div class="label">Thema</div><div class="value">${getThemaLabel()}</div></div>
+</div>
+
+<h2>Motive / Qualifizierung</h2>
+<div class="note">${motiveText}</div>
+
+<h2>Technischer Check</h2>
+<div class="grid">
+  <div class="item"><div class="label">Heizsystem</div><div class="value">${heatSource}</div></div>
+  <div class="item"><div class="label">Heizungsverbrauch</div><div class="value">${heatUsage}</div></div>
+  <div class="item"><div class="label">PV-Anlage</div><div class="value">${pvAnlage}</div></div>
+  <div class="item"><div class="label">Stromverbrauch</div><div class="value">${powerUsage}</div></div>
+  <div class="item"><div class="label">Baujahr</div><div class="value">${buildingYear}</div></div>
+  <div class="item"><div class="label">Wohnfläche</div><div class="value">${houseSize}</div></div>
+</div>
+
+<h2>Wirtschaftlichkeit</h2>
+<div class="grid">
+  <div class="item"><div class="label">Heizkosten</div><div class="value">${heizkosten}</div></div>
+  <div class="item"><div class="label">Stromkosten</div><div class="value">${stromkosten}</div></div>
+</div>
+
+<h2>Vereinbarter Termin</h2>
+<div class="note-accent"><strong>📅 ${termin}</strong></div>
+
+<h2>Entscheider</h2>
+<div class="note">${entscheiderText}</div>
+
+<h2>Vorwegabschluss / Closing</h2>
+<div class="note">${$('closingText')?.textContent || '—'}</div>
+
+<h2>Notizen</h2>
+<div class="note">${valueOrDash(state.kundenDaten.notizen)}</div>
+
+<div class="footer">EnergyEngel · Finanzengel GmbH · Telefonleitfaden</div>
+</body></html>`;
     }
 
     function exportPdf() {
@@ -3733,100 +4550,10 @@
       showStep(numeric);
     }
 
-    function applyTippgeberPrefill() {
-      const params = new URLSearchParams(window.location.search);
-      if (![...params.keys()].length) return;
-
-      const get = (key) => (params.get(key) || '').trim();
-      const setVal = (id, value) => { const el = $(id); if (el && value) el.value = value; };
-
-      const vorname = get('vorname');
-      const nachname = get('nachname');
-      const telefon = get('telefon');
-      const email = get('email');
-      const plz = get('plz');
-      const ort = get('ort');
-      const strasse = get('strasse');
-      const immobilientyp = get('immobilientyp');
-      const baujahr = get('baujahr');
-      const themenRaw = get('themen');
-      const tippgeber = get('tippgeber');
-      const notiz = get('notiz');
-      const berater = get('berater');
-      const dealId = get('dealId');
-
-      const fullName = [vorname, nachname].filter(Boolean).join(' ');
-      setVal('kunde-name', fullName);
-      setVal('kunde-telefon', telefon);
-      setVal('kunde-email', email);
-      setVal('kunde-berater', berater);
-
-      const addressParts = [];
-      if (strasse) addressParts.push(strasse);
-      const plzOrt = [plz, ort].filter(Boolean).join(' ');
-      if (plzOrt) addressParts.push(plzOrt);
-      setVal('kunde-ort', addressParts.join(', '));
-
-      const themaMap = {
-        pv: ['pv'], photovoltaik: ['pv'],
-        wp: ['wp'], waermepumpe: ['wp'], 'wärmepumpe': ['wp'],
-        sv: ['sv'], strom: ['sv'], stromvertrag: ['sv'], stromvergleich: ['sv'],
-        gv: ['gv'], gas: ['gv'], gasvertrag: ['gv'], gasvergleich: ['gv'],
-        sg: ['sv', 'gv'], 'strom&gas': ['sv', 'gv'], 'strom & gas': ['sv', 'gv'],
-        bat: ['pv'], batterie: ['pv'], batteriespeicher: ['pv']
-      };
-      const themaTokens = themenRaw
-        .split(/[,;|]/)
-        .map((t) => t.trim().toLowerCase())
-        .filter(Boolean);
-      const mappedSet = new Set();
-      themaTokens.forEach((t) => {
-        const mapped = themaMap[t];
-        if (mapped) mapped.forEach((m) => mappedSet.add(m));
-      });
-      const mappedThemen = Array.from(mappedSet);
-      const primaryThema = mappedThemen[0] || null;
-      const secondaryPrefill = mappedThemen.slice(1);
-
-      const noteLines = [];
-      if (tippgeber) noteLines.push('Empfehlung von: ' + tippgeber);
-      if (notiz) noteLines.push(notiz);
-      if (immobilientyp) noteLines.push('Immobilientyp: ' + immobilientyp);
-      if (baujahr) noteLines.push('Baujahr: ' + baujahr);
-      if (themaTokens.length) noteLines.push('Themen-Interesse: ' + themaTokens.join(', '));
-      if (dealId) noteLines.push('Pipedrive Deal-ID: ' + dealId);
-      if (noteLines.length) setVal('kunde-notizen', noteLines.join('\n'));
-
-      if (dealId) window.__pipedriveDealId = dealId;
-
-      const tippgeberFirstName = tippgeber ? tippgeber.split(/\s+/)[0] : '';
-      if (berater || tippgeberFirstName) {
-        document.querySelectorAll('.spoken-text').forEach((el) => {
-          let html = el.innerHTML;
-          if (berater) html = html.replace(/\[Name\]/g, berater);
-          if (tippgeberFirstName) html = html.replace(/\[Vorname\]/g, tippgeberFirstName);
-          el.innerHTML = html;
-        });
-      }
-
-      if (tippgeber) {
-        if (primaryThema) {
-          state.thema = primaryThema;
-          secondaryPrefill.forEach((t) => state.secondaryThemen.add(t));
-        }
-        setPfad('empfehlung', { keepTopics: true });
-      } else if (primaryThema) {
-        state.thema = primaryThema;
-        secondaryPrefill.forEach((t) => state.secondaryThemen.add(t));
-        setPfad('lead', { keepTopics: true, suppressScroll: true });
-      }
-    }
-
     function bind() {
       $('pfad-lead').addEventListener('click', () => setPfad('lead'));
       $('pfad-empfehlung').addEventListener('click', () => setPfad('empfehlung'));
-      $$('.topic-btn').forEach((btn) => btn.addEventListener('click', () => toggleTopic(btn.dataset.topic)));
-      $('startGuideBtn')?.addEventListener('click', () => startGuide());
+      $$('.topic-btn').forEach((btn) => btn.addEventListener('click', () => setTopic(btn.dataset.topic)));
 
       $('backBtn').addEventListener('click', () => {
         if (state.currentStep === 1) {
@@ -3876,11 +4603,7 @@
       $$('[data-next]').forEach((btn) => btn.addEventListener('click', () => showStep(Number(btn.dataset.next))));
       $$('.first-response-btn').forEach((btn) => btn.addEventListener('click', () => handleFirstResponse(btn)));
       $$('.second-response-btn').forEach((btn) => btn.addEventListener('click', () => handleSecondResponse(btn)));
-      $('motiveGrid')?.addEventListener('click', (e) => {
-        const btn = e.target.closest('.motive-btn');
-        if (!btn) return;
-        toggleMotive(btn.dataset.motive, btn);
-      });
+      $$('.motive-btn').forEach((btn) => btn.addEventListener('click', () => toggleMotive(btn.dataset.motive, btn)));
       $$('.tech-question-card').forEach((card) => {
         card.addEventListener('mouseenter', () => {
           if (card.classList.contains('is-idle')) return;
@@ -3905,37 +4628,165 @@
       $$('.size-btn').forEach((btn) => btn.addEventListener('click', () => selectSizeBucket(btn.dataset.size, btn)));
       $$('.heat-source-btn').forEach((btn) => btn.addEventListener('click', () => selectHeatSource(btn.dataset.source, btn)));
       $$('.pv-btn').forEach((btn) => btn.addEventListener('click', () => selectPv(btn.dataset.pv, btn)));
-      $$('.roof-btn').forEach((btn) => btn.addEventListener('click', () => selectRoof(btn.dataset.roof, btn)));
-      $('providerInput')?.addEventListener('input', handleProviderInput);
-      $('buildingYearSlider')?.addEventListener('input', updateBuildingYear);
-      $('sizeSlider')?.addEventListener('input', updateSizeSlider);
-      $('heatUsageSlider')?.addEventListener('input', updateHeatUsageSlider);
-      $('powerUsageSlider')?.addEventListener('input', () => {
+      $$('[data-unknown]').forEach((btn) => btn.addEventListener('click', () => handleUnknown(btn.dataset.unknown, btn)));
+      // Wirtschaft: Slider-Range-Definitionen je nach Periode
+      const econCostRanges = {
+        heat:  { year: { max: 6000, step: 50 }, month: { max: 500, step: 5  } },
+        power: { year: { max: 3000, step: 25 }, month: { max: 250, step: 5  } }
+      };
+
+      const updateEconCostSliderRange = (cost) => {
+        const period = state.econCost?.[cost]?.period || 'year';
+        const range = econCostRanges[cost][period];
+        const sliderId = cost === 'heat' ? 'econHeatCostSlider' : 'econPowerCostSlider';
+        const inputId  = cost === 'heat' ? 'econHeatCostInput'  : 'econPowerCostInput';
+        const maxLblId = cost === 'heat' ? 'econHeatCostMax'    : 'econPowerCostMax';
+        const valLblId = cost === 'heat' ? 'econHeatCostValue'  : 'econPowerCostValue';
+        const slider = $(sliderId);
+        const input  = $(inputId);
+        if (slider) {
+          slider.max = String(range.max);
+          slider.step = String(range.step);
+          // Falls Wert > neuer max → clampen
+          if (Number(slider.value) > range.max) slider.value = String(range.max);
+        }
+        if (input) {
+          input.max = String(range.max);
+          if (Number(input.value) > range.max) input.value = String(range.max);
+        }
+        setText(maxLblId, formatNumberDE(range.max) + ' €');
+        const v = slider ? Number(slider.value) : 0;
+        const unit = period === 'month' ? '€ / Monat' : '€ / Jahr';
+        setText(valLblId, `${formatNumberDE(v)} ${unit}`);
+      };
+
+      // Wirtschaft: Jahr/Monat-Toggle
+      $$('.cost-period-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const cost = btn.dataset.cost; // 'heat' | 'power'
+          const period = btn.dataset.period; // 'year' | 'month'
+          $$(`.cost-period-btn[data-cost="${cost}"]`).forEach((b) => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          state.econCost = state.econCost || { heat: { period: 'year', value: null }, power: { period: 'year', value: null } };
+          state.econCost[cost].period = period;
+          // Unit-Label
+          const unitEl = document.getElementById(cost === 'heat' ? 'econHeatCostUnit' : 'econPowerCostUnit');
+          if (unitEl) unitEl.textContent = period === 'month' ? '€ / Monat' : '€ / Jahr';
+          // Slider-Range an neue Periode anpassen
+          updateEconCostSliderRange(cost);
+          // State-Wert ggf. clampen
+          const sliderId = cost === 'heat' ? 'econHeatCostSlider' : 'econPowerCostSlider';
+          const slider = $(sliderId);
+          if (slider) {
+            state.econCost[cost].value = Number(slider.value) || null;
+          }
+          updateEconCostSummary(cost);
+          updateStageLocks();
+        });
+      });
+
+      // Gemeinsamer Handler für Wertänderung (egal ob aus Slider oder Input)
+      const onEconCostValueChange = (cost, val) => {
+        const scope = cost === 'heat' ? 'econHeatCost' : 'econPowerCost';
+        // "Weiß nicht" automatisch zurücksetzen
+        if (state.unknown?.[scope]) {
+          state.unknown[scope] = false;
+          const notizenEl = $('kunde-notizen');
+          const notiz = unknownConfig[scope].notiz;
+          if (notizenEl && notizenEl.value.includes(notiz)) {
+            notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+          }
+          document.querySelectorAll(`.unknown-btn[data-unknown="${scope}"]`).forEach((b) => b.classList.remove('selected'));
+        }
+        state.econCost = state.econCost || { heat: { period: 'year', value: null }, power: { period: 'year', value: null } };
+        state.econCost[cost].value = val > 0 ? val : null;
+        if (cost === 'heat')  state.econDone.heat  = val > 0;
+        if (cost === 'power') state.econDone.power = val > 0;
+        // Live Value-Label im Slider-Bereich aktualisieren
+        const period = state.econCost[cost].period || 'year';
+        const valLblId = cost === 'heat' ? 'econHeatCostValue' : 'econPowerCostValue';
+        const unit = period === 'month' ? '€ / Monat' : '€ / Jahr';
+        setText(valLblId, `${formatNumberDE(val || 0)} ${unit}`);
+        updateEconCostSummary(cost);
+        updateStageLocks();
+      };
+
+      // Slider ↔ Input bidirektional verkoppeln
+      const bindCostSliderInput = (sliderId, inputId, cost) => {
+        const slider = $(sliderId);
+        const input  = $(inputId);
+        if (!slider || !input) return;
+
+        slider.addEventListener('input', () => {
+          const v = Number(slider.value) || 0;
+          input.value = v > 0 ? String(v) : '';
+          onEconCostValueChange(cost, v);
+        });
+
+        input.addEventListener('input', () => {
+          const max = Number(slider.max) || 0;
+          const raw = Number(input.value);
+          if (isNaN(raw)) return;
+          const clamped = Math.max(0, Math.min(max, raw));
+          slider.value = String(clamped);
+          onEconCostValueChange(cost, clamped);
+        });
+
+        // Fade-Out beim Verlassen + Entsperren beim Fokus
+        input.addEventListener('blur', () => {
+          if (Number(input.value) > 0) input.classList.add('is-filled-locked');
+        });
+        input.addEventListener('focus', () => {
+          input.classList.remove('is-filled-locked');
+        });
+      };
+      bindCostSliderInput('econHeatCostSlider',  'econHeatCostInput',  'heat');
+      bindCostSliderInput('econPowerCostSlider', 'econPowerCostInput', 'power');
+
+      // Initial-Range setzen
+      updateEconCostSliderRange('heat');
+      updateEconCostSliderRange('power');
+
+      // Slider ↔ Input Sync für Technik-Slider
+      const syncSliderInput = (sliderId, inputId, onChange) => {
+        const slider = $(sliderId);
+        const input = $(inputId);
+        if (!slider || !input) return;
+        // Slider bewegt → Input updaten + onChange
+        slider.addEventListener('input', () => {
+          input.value = slider.value;
+          if (onChange) onChange();
+        });
+        // Input geändert → Slider updaten + onChange
+        input.addEventListener('input', () => {
+          const val = Number(input.value);
+          const min = Number(slider.min);
+          const max = Number(slider.max);
+          if (isNaN(val)) return;
+          const clamped = Math.max(min, Math.min(max, val));
+          slider.value = String(clamped);
+          if (onChange) onChange();
+        });
+      };
+      syncSliderInput('buildingYearSlider', 'buildingYearInput', updateBuildingYear);
+      syncSliderInput('sizeSlider', 'sizeInput', updateSizeSlider);
+      syncSliderInput('heatUsageSlider', 'heatUsageInput', updateHeatUsageSlider);
+      syncSliderInput('powerUsageSlider', 'powerUsageInput', () => {
+        if (state.unknown?.powerUsage) {
+          state.unknown.powerUsage = false;
+          const notizenEl = $('kunde-notizen');
+          const notiz = unknownConfig.powerUsage.notiz;
+          if (notizenEl && notizenEl.value.includes(notiz)) {
+            notizenEl.value = notizenEl.value.split('\n').filter((l) => l.trim() !== notiz).join('\n').trim();
+          }
+          document.querySelectorAll('.unknown-btn[data-unknown="powerUsage"]').forEach((b) => b.classList.remove('selected'));
+          const slider = $('powerUsageSlider');
+          if (slider) slider.style.opacity = '';
+        }
         state.techDone.power = true;
         enableTechIdle('power');
         setTechnicalQuestion('power');
         updatePowerUsage();
-      });
-      $('econBuildingYearSlider')?.addEventListener('input', () => {
-        state.econDone.building = true;
-        setText('econBuildingYearValue', $('econBuildingYearSlider').value);
-        updateStageLocks();
-      });
-      $('econSizeSlider')?.addEventListener('input', () => {
-        state.econDone.size = true;
-        setText('econSizeValue', `${formatNumberDE(Number($('econSizeSlider').value))} qm`);
-        updateStageLocks();
-      });
-      $('econHeatUsageSlider')?.addEventListener('input', () => {
-        state.econDone.heat = true;
-        state.econHeatUnitCost = Number($('econHeatUsageSlider').value);
-        updateEconomicHeatUsageUI();
-        updateStageLocks();
-      });
-      $('econPowerUsageSlider')?.addEventListener('input', () => {
-        state.econDone.power = true;
-        setText('econPowerUsageValue', `${formatNumberDE(Number($('econPowerUsageSlider').value))} kWh / Jahr`);
-        updateStageLocks();
       });
       $$('.tag-btn').forEach((btn) => btn.addEventListener('click', () => toggleTag(btn.dataset.tag, btn)));
       $$('.info-btn').forEach((btn) => btn.addEventListener('click', () => showInfo(btn.dataset.info, btn)));
@@ -3947,8 +4798,37 @@
         toggleAccordion(btn.dataset.accDyn);
       });
       $$('.term-step').forEach((el) => el.addEventListener('click', () => toggleTermStep(Number(el.dataset.term), el)));
+
+      // Entscheider-Buttons: Antwort speichern + Termin-Stage freischalten
+      $$('.entscheider-btn').forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const val = btn.dataset.entscheider;
+          // Alle Buttons deselektieren, dann den geklickten selektieren
+          $$('.entscheider-btn').forEach((b) => b.classList.remove('selected'));
+          btn.classList.add('selected');
+
+          // Extra-Feld ein/aus bei Nein
+          const extraWrap = $('entscheiderExtraWrap');
+          if (extraWrap) {
+            extraWrap.style.display = val === 'no' ? 'block' : 'none';
+          }
+
+          // Entscheiderfrage als beantwortet markieren → Termin wird freigeschaltet
+          state.entscheiderAnswered = true;
+          updateSummary();
+          updateStageLocks();
+        });
+      });
+
+      // Entscheider-Eingabe: nicht propagieren, damit Click nicht den Step toggle-t
+      $('entscheiderExtra')?.addEventListener('click', (event) => event.stopPropagation());
+      $('entscheiderExtra')?.addEventListener('input', updateSummary);
       ['kunde-name','kunde-telefon','kunde-email','kunde-ort','kunde-termin','kunde-berater','kunde-notizen'].forEach((id) => $(id).addEventListener('input', updateSummary));
-      $('termSelect')?.addEventListener('change', updateTermSelection);
+      $('terminDatum')?.addEventListener('change', updateTermSelection);
+      $('terminUhrzeit')?.addEventListener('change', updateTermSelection);
+      $('terminDatum')?.addEventListener('input', updateTermSelection);
+      $('terminUhrzeit')?.addEventListener('input', updateTermSelection);
       $('refreshBtn').addEventListener('click', updateSummary);
       $('motiveCloseYes')?.addEventListener('click', () => answerMotiveClose('yes'));
       $('motiveCloseNo')?.addEventListener('click', () => answerMotiveClose('no'));
@@ -3957,16 +4837,661 @@
       $('econCloseYes')?.addEventListener('click', () => answerEconClose('yes'));
       $('econCloseNo')?.addEventListener('click', () => answerEconClose('no'));
       $('exportBtn').addEventListener('click', exportPdf);
+      $('abschliessenBtn')?.addEventListener('click', abschliessenUndPdf);
     }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PIPEDRIVE-INTEGRATION
+    // ═══════════════════════════════════════════════════════════════
+    const TERMIN_WEBHOOK_URL    = 'https://energyengel.app.n8n.cloud/webhook/termin-vereinbart';
+    const ABSCHLUSS_WEBHOOK_URL = 'https://energyengel.app.n8n.cloud/webhook/leitfaden-abschluss';
+
+    function pipedriveFillFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      // n8n schickt 'dealId' (camelCase). 'deal_id' bleibt als Fallback für ältere Links.
+      const dealId = params.get('dealId') || params.get('deal_id');
+      if (!dealId) return;
+
+      let hidden = document.getElementById('pipedrive-deal-id');
+      if (!hidden) {
+        hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.id = 'pipedrive-deal-id';
+        document.body.appendChild(hidden);
+      }
+      hidden.value = dealId;
+
+      const card = document.getElementById('pipedrive-termin-card');
+      if (card) card.style.display = '';
+      const label = document.getElementById('pipedrive-deal-label');
+      if (label) label.textContent = 'Pipedrive-Deal #' + dealId;
+
+      // URLSearchParams decodiert Werte bereits — nur null/empty defensive abfangen
+      const get = (key) => {
+        const v = params.get(key);
+        return v == null ? '' : v;
+      };
+      const setField = (id, val) => {
+        if (!val) return;
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+      };
+
+      // ── Name: zuerst vorname + nachname, sonst Fallback 'kunde' ──
+      const vorname = get('vorname');
+      const nachname = get('nachname');
+      const fullName = (vorname || nachname)
+        ? [vorname, nachname].filter(Boolean).join(' ')
+        : get('kunde');
+      setField('kunde-name', fullName);
+
+      // ── Kontakt ──
+      setField('kunde-telefon', get('telefon'));
+      setField('kunde-email', get('email'));
+
+      // ── Adresse: zuerst strasse/plz/ort einzeln, sonst Fallbacks ──
+      const strasse = get('strasse');
+      const plz = get('plz');
+      const ort = get('ort');
+      const adressTeile = [];
+      if (strasse) adressTeile.push(strasse);
+      if (plz || ort) adressTeile.push([plz, ort].filter(Boolean).join(' ').trim());
+      const adresse = adressTeile.filter(Boolean).join(', ') || ort || get('immobilie');
+      setField('kunde-ort', adresse);
+
+      // ── Notizen-Feld: Tippgeber, Themen, Immobilie, Tippgeber-Notiz ──
+      const tippgeber = get('tippgeber');
+      const tippgeberNotiz = get('notiz');
+      const immobilientyp = get('immobilientyp') || get('immobilie');
+      const themenStr = get('themen') || get('thema');
+      const baujahr = get('baujahr');
+
+      const notizenEl = document.getElementById('kunde-notizen');
+      if (notizenEl) {
+        const teile = [];
+        if (tippgeber) teile.push('Empfehlung von: ' + tippgeber);
+        if (themenStr) teile.push('Interesse: ' + themenStr);
+        if (immobilientyp) {
+          const baujahrTeil = (baujahr && /^\d{4}$/.test(baujahr)) ? `, Baujahr ${baujahr}` : '';
+          teile.push('Immobilie: ' + immobilientyp + baujahrTeil);
+        }
+        if (tippgeberNotiz) teile.push('Tippgeber-Notiz: ' + tippgeberNotiz);
+        if (teile.length) notizenEl.value = teile.join('\n');
+      }
+
+      // ── Pfad automatisch auf "Empfehlung" setzen ──
+      setTimeout(() => {
+        const pfadBtn = document.getElementById('pfad-empfehlung');
+        if (pfadBtn && !pfadBtn.classList.contains('active')) pfadBtn.click();
+      }, 80);
+
+      // ── Topic-Mapping (themen kann mehrere kommagetrennte Werte enthalten) ──
+      // Tippgeber-Form sendet: Photovoltaik, Wärmepumpe, Batteriespeicher, Stromvertrag, Gasvertrag
+      const themaMap = {
+        'photovoltaik': 'pv',
+        'pv': 'pv',
+        'batteriespeicher': 'pv',  // Speicher gehört üblicherweise zu PV
+        'speicher': 'pv',
+        'wärmepumpe': 'wp',
+        'waermepumpe': 'wp',
+        'wp': 'wp'
+      };
+      if (themenStr) {
+        const list = themenStr.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean);
+        const pvSelected = list.some((t) => themaMap[t] === 'pv');
+        const wpSelected = list.some((t) => themaMap[t] === 'wp');
+        // Buttons per setTimeout anklicken — Toggle-Logik greift dann automatisch
+        if (pvSelected) {
+          setTimeout(() => { document.getElementById('topic-pv')?.click(); }, 150);
+        }
+        if (wpSelected) {
+          // Leicht später, damit PV zuerst aktiv ist (pvwp-Erkennung funktioniert korrekt)
+          setTimeout(() => { document.getElementById('topic-wp')?.click(); }, pvSelected ? 200 : 150);
+        }
+      }
+
+      // ── Baujahr-Slider + Number-Input synchron setzen ──
+      if (baujahr && /^\d{4}$/.test(baujahr)) {
+        setTimeout(() => {
+          const slider = document.getElementById('buildingYearSlider');
+          const numInput = document.getElementById('buildingYearInput');
+          if (slider) {
+            slider.value = baujahr;
+            slider.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+          if (numInput) {
+            numInput.value = baujahr;
+            numInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+        }, 200);
+      }
+
+      if (typeof updateSummary === 'function') {
+        try { updateSummary(); } catch (e) {}
+      }
+    }
+
+    async function pipedriveSendeTermin() {
+      const dealIdEl = document.getElementById('pipedrive-deal-id');
+      const dealId = dealIdEl ? dealIdEl.value : null;
+      if (!dealId) {
+        alert('⚠️ Kein Pipedrive-Deal verknüpft.');
+        return;
+      }
+
+      const datum = document.getElementById('termin-datum')?.value || '';
+      const uhrzeit = document.getElementById('termin-uhrzeit')?.value || '';
+      if (!datum || !uhrzeit) {
+        alert('⚠️ Bitte Termin-Datum UND Uhrzeit eingeben.');
+        return;
+      }
+
+      const kundeEmail = document.getElementById('kunde-email')?.value?.trim() || '';
+      if (!kundeEmail) {
+        if (!confirm('⚠️ Keine Kunden-E-Mail vorhanden — Bestätigungsmail kann nicht verschickt werden.\n\nTrotzdem fortfahren?')) return;
+      }
+
+      const btn = document.getElementById('btn-termin-senden');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Wird gesendet...';
+      }
+
+      const payload = {
+        deal_id: dealId,
+        kunde_name: document.getElementById('kunde-name')?.value?.trim() || '',
+        kunde_email: kundeEmail,
+        kunde_telefon: document.getElementById('kunde-telefon')?.value?.trim() || '',
+        termin_datum: datum,
+        termin_uhrzeit: uhrzeit,
+        termin_ort: document.getElementById('termin-ort')?.value?.trim() || 'Vor Ort beim Kunden',
+        vertriebler_name: document.getElementById('kunde-berater')?.value?.trim() || '',
+        gespraechsnotizen: document.getElementById('kunde-notizen')?.value?.trim() || '',
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await fetch(TERMIN_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert(`✅ Termin an Pipedrive übermittelt!\n\n📅 ${datum} um ${uhrzeit}\n\nDer Kunde bekommt gleich eine Bestätigungsmail.`);
+        if (btn) {
+          btn.textContent = '✓ Termin gesendet';
+          btn.disabled = true;
+        }
+      } catch (err) {
+        console.error('Termin-Webhook-Fehler:', err);
+        alert('❌ Fehler beim Senden: ' + err.message);
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '📤 Termin bestätigen & Bestätigungsmail an Kunde senden';
+        }
+      }
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // ABSCHLUSS-WEBHOOK: alle Gesprächsdaten an Pipedrive zurücksenden
+    // ────────────────────────────────────────────────────────────────
+    function buildAbschlussPayload() {
+      const dealIdEl = document.getElementById('pipedrive-deal-id');
+      const dealId = dealIdEl ? dealIdEl.value : null;
+
+      // Motive
+      const motiveLabels = {
+        gaskosten: 'Hohe Energiekosten / Gas',
+        unabhaengig: 'Unabhängigkeit',
+        zukunft: 'GEG / Zukunft',
+        'heizung-alt': 'Alte Heizung / Defekt',
+        pv: 'Hat PV / will kombinieren',
+        machbarkeit: 'Machbarkeit',
+        foerderung: 'Förderung',
+        neubau: 'Neubau / Sanierung'
+      };
+      const motiveSelected = Array.from(state.motive || []);
+      const motiveTextList = motiveSelected.map((m) => motiveLabels[m] || m);
+
+      // Entscheider
+      const entscheiderBtn = document.querySelector('.entscheider-btn.selected');
+      let entscheiderAntwort = null;
+      let entscheiderText = '—';
+      let entscheiderExtra = '';
+      if (entscheiderBtn) {
+        const val = entscheiderBtn.dataset.entscheider;
+        entscheiderAntwort = val === 'yes' ? 'nur_kunde' : (val === 'no' ? 'weitere' : null);
+        entscheiderExtra = document.getElementById('entscheiderExtra')?.value?.trim() || '';
+        if (val === 'yes') entscheiderText = 'Nur der Kunde entscheidet';
+        else if (val === 'no') entscheiderText = entscheiderExtra ? `Weitere: ${entscheiderExtra}` : 'Es gibt weitere Entscheider';
+      }
+
+      // Profil (falls befüllt)
+      const profil = state.kundenDaten?.profil || {};
+
+      // Themen-Label
+      const themaLabel = (typeof getThemaLabel === 'function') ? getThemaLabel() : (state.thema || '');
+      const pfadLabel  = (typeof getPfadLabel  === 'function') ? getPfadLabel()  : (state.pfad  || '');
+
+      // Heat / power
+      const heatSourceLabels = { gas: 'Gas', oil: 'Öl', other: 'Anderes' };
+
+      return {
+        // ── Identifikation ──
+        deal_id: dealId,
+        timestamp: new Date().toISOString(),
+
+        // ── Kundendaten ──
+        kunde: {
+          name:    document.getElementById('kunde-name')?.value?.trim() || '',
+          telefon: document.getElementById('kunde-telefon')?.value?.trim() || '',
+          email:   document.getElementById('kunde-email')?.value?.trim() || '',
+          ort:     document.getElementById('kunde-ort')?.value?.trim() || ''
+        },
+        berater: document.getElementById('kunde-berater')?.value?.trim() || '',
+
+        // ── Gesprächspfad ──
+        pfad: state.pfad || null,
+        pfad_label: pfadLabel,
+        thema: state.thema || null,
+        thema_label: themaLabel,
+
+        // ── Motive ──
+        motive: motiveSelected,
+        motive_labels: motiveTextList,
+        motive_text: motiveTextList.join(', '),
+        motive_unbekannt: !!state.unknown?.motive,
+        motiv_close: state.motiveConfirm,
+
+        // ── Technischer Check ──
+        technik: {
+          heizsystem: state.unknown?.heatSource ? null : (state.heatSource || null),
+          heizsystem_label: state.unknown?.heatSource ? '— Kunde weiß nicht —' : (heatSourceLabels[state.heatSource] || '—'),
+          heizsystem_unbekannt: !!state.unknown?.heatSource,
+          heizverbrauch: state.unknown?.heatUsage ? null : (state.heatUsage || null),
+          heizverbrauch_einheit: state.heatSource === 'oil' ? 'l' : 'kWh',
+          heizverbrauch_unbekannt: !!state.unknown?.heatUsage,
+          stromverbrauch: state.unknown?.powerUsage ? null : (state.powerUsage || null),
+          stromverbrauch_unbekannt: !!state.unknown?.powerUsage,
+          baujahr: state.unknown?.buildingYear ? null : (state.buildingYear || null),
+          baujahr_typ: state.buildingSubtype || '',
+          baujahr_unbekannt: !!state.unknown?.buildingYear,
+          wohnflaeche: state.unknown?.houseSize ? null : (state.houseSize || null),
+          wohnflaeche_unbekannt: !!state.unknown?.houseSize,
+          pv_anlage: state.unknown?.pvAnlage ? null : (state.pvAnlage || null),
+          pv_unbekannt: !!state.unknown?.pvAnlage
+        },
+        technik_close: state.techConfirm,
+
+        // ── Wirtschaftlichkeit ──
+        wirtschaft: {
+          heizkosten: {
+            wert: state.econCost?.heat?.value || null,
+            periode: state.econCost?.heat?.period || 'year',
+            unbekannt: !!state.unknown?.econHeatCost
+          },
+          stromkosten: {
+            wert: state.econCost?.power?.value || null,
+            periode: state.econCost?.power?.period || 'year',
+            unbekannt: !!state.unknown?.econPowerCost
+          }
+        },
+        wirtschaft_close: state.econConfirm,
+
+        // ── Entscheider ──
+        entscheider: {
+          antwort: entscheiderAntwort,
+          text: entscheiderText,
+          weitere: entscheiderExtra
+        },
+
+        // ── Termin ──
+        termin: {
+          datum:   document.getElementById('termin-datum')?.value || '',
+          uhrzeit: document.getElementById('termin-uhrzeit')?.value || '',
+          ort:     document.getElementById('termin-ort')?.value?.trim() || '',
+          text:    state.kundenDaten?.termin || ''
+        },
+
+        // ── Kundenprofil (Beruf, Familienstand, Hobbys etc.) ──
+        profil: {
+          beruf:         profil.beruf || '',
+          familienstand: profil.familienstand || '',
+          alter:         profil.alter || '',
+          hobbys:        profil.hobbys || '',
+          interessen:    profil.interessen || '',
+          farbtypen:     Array.isArray(profil.farbtypen) ? profil.farbtypen : []
+        },
+
+        // ── Notizen ──
+        notizen: document.getElementById('kunde-notizen')?.value?.trim() || '',
+
+        // ── Closing-Text (Vorwegabschluss) ──
+        closing: document.getElementById('closingText')?.textContent || ''
+      };
+    }
+
+    async function pipedriveSendeAbschluss() {
+      // Webhook wird IMMER gefeuert — auch ohne dealId.
+      // n8n entscheidet dann: deal_id leer → neue Person + neuer Deal anlegen.
+      // WICHTIG: KEIN mode:'no-cors' verwenden — sonst überschreibt der Browser
+      // den Content-Type auf text/plain und n8n erhält den Body als String,
+      // nicht als geparstes JSON. Daten würden dann verloren gehen.
+      const payload = buildAbschlussPayload();
+
+      try {
+        const response = await fetch(ABSCHLUSS_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) {
+          console.error('Abschluss-Webhook gab Status ' + response.status + ' zurück');
+          return { sent: false, reason: 'http-error', status: response.status };
+        }
+        return { sent: true, hasDeal: !!payload.deal_id };
+      } catch (err) {
+        console.error('Abschluss-Webhook-Fehler:', err);
+        return { sent: false, reason: 'error', error: err };
+      }
+    }
+
+    async function abschliessenUndPdf() {
+      const btn = document.getElementById('abschliessenBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Sende an Pipedrive...';
+      }
+
+      const result = await pipedriveSendeAbschluss();
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '✓ ABSCHLIESSEN & PDF ERSTELLEN';
+      }
+
+      if (result.sent) {
+        const dealIdEl = document.getElementById('pipedrive-deal-id');
+        const dealId = dealIdEl ? dealIdEl.value : '';
+        if (btn) {
+          btn.textContent = dealId
+            ? `✓ An Pipedrive übermittelt (Deal #${dealId})`
+            : '✓ An Pipedrive übermittelt (neuer Deal wird angelegt)';
+        }
+      } else if (result.reason === 'error') {
+        alert('⚠️ Daten konnten nicht an Pipedrive übermittelt werden.\nDas PDF wird trotzdem erstellt.\n\nFehler: ' + (result.error?.message || 'unbekannt'));
+      }
+
+      // PDF immer öffnen — als lokales Backup für den Berater
+      try { exportPdf(); } catch (e) { console.error(e); }
+    }
+    // ═══════════════════════════════════════════════════════════════
 
     bind();
     bindLockWarnings();
-    applyTippgeberPrefill();
     window.addEventListener('scroll', handleGuideScroll, { passive: true });
     updateProgress(0);
     updateProgressVisibility();
     updateStageLocks();
     updateSummary();
+
+    pipedriveFillFromURL();
+    document.getElementById('btn-termin-senden')?.addEventListener('click', pipedriveSendeTermin);
+
+    // "Weiter zum Termin"-Button auf der Interesse-Seite → führt zur Entscheiderfrage
+    document.getElementById('toTerminBtn')?.addEventListener('click', () => {
+      state.manualStageOpen.entscheider = true;
+      updateStageLocks();
+      const target = document.getElementById('entscheiderStage');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // "Weiter zum Termin"-Button im entscheiderStage → zum eigentlichen Termin
+    document.getElementById('toTerminAfterEntscheiderBtn')?.addEventListener('click', () => {
+      if (!state.entscheiderAnswered) return;
+      state.manualStageOpen.term = true;
+      updateStageLocks();
+      const target = document.getElementById('termStage');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Schwebender Einwände-Button: Toggle zwischen "Einwände" und "Zurück"
+    (function setupFloatingObjectionBtn() {
+      const btn = document.getElementById('floatingObjectionBtn');
+      if (!btn) return;
+      const label = document.getElementById('floatingObjectionLabel');
+      const icon = document.getElementById('floatingObjectionIcon');
+      let previousScroll = null;
+
+      btn.addEventListener('click', () => {
+        const isReturn = btn.classList.contains('is-return');
+        if (isReturn) {
+          // Zurück zu vorheriger Position
+          if (previousScroll !== null) {
+            window.scrollTo({ top: previousScroll, behavior: 'smooth' });
+          }
+          btn.classList.remove('is-return');
+          if (label) label.textContent = 'Einwände';
+          if (icon) icon.textContent = '⚠️';
+          previousScroll = null;
+        } else {
+          // Zu Einwänden springen
+          previousScroll = window.scrollY;
+          const target = document.getElementById('objectionStage');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          btn.classList.add('is-return');
+          if (label) label.textContent = 'Zurück';
+          if (icon) icon.textContent = '↩';
+        }
+      });
+    })();
+
+    // Notizen-Popover: Toggle, bidirektionale Sync mit kunde-notizen
+    (function setupNotesPopover() {
+      const btn = document.getElementById('floatingNotesBtn');
+      const popover = document.getElementById('notesPopover');
+      const textarea = document.getElementById('notesPopoverText');
+      const closeBtn = document.getElementById('notesPopoverClose');
+      const countEl = document.getElementById('notesPopoverCount');
+      const mainNotes = document.getElementById('kunde-notizen');
+      if (!btn || !popover || !textarea || !mainNotes) return;
+
+      const updateCount = () => {
+        if (countEl) countEl.textContent = `${textarea.value.length} Zeichen`;
+      };
+
+      const syncFromMain = () => {
+        if (textarea.value !== mainNotes.value) {
+          textarea.value = mainNotes.value;
+          updateCount();
+        }
+      };
+
+      const open = () => {
+        syncFromMain();
+        popover.classList.add('is-open');
+        popover.setAttribute('aria-hidden', 'false');
+        btn.classList.add('is-open');
+        requestAnimationFrame(() => textarea.focus());
+      };
+      const close = () => {
+        popover.classList.remove('is-open');
+        popover.setAttribute('aria-hidden', 'true');
+        btn.classList.remove('is-open');
+      };
+
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (popover.classList.contains('is-open')) close();
+        else open();
+      });
+
+      closeBtn?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        close();
+      });
+
+      // Popover → Main-Feld (tippen im Popover schreibt in kunde-notizen)
+      textarea.addEventListener('input', () => {
+        mainNotes.value = textarea.value;
+        // Main-Feld input-Event triggern, damit updateSummary() + state.kundenDaten.notizen aktualisiert werden
+        mainNotes.dispatchEvent(new Event('input', { bubbles: true }));
+        updateCount();
+      });
+
+      // Main-Feld → Popover (Änderungen von woanders, z.B. ?-Buttons, reflektieren)
+      mainNotes.addEventListener('input', syncFromMain);
+
+      // ESC schließt Popover
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && popover.classList.contains('is-open')) close();
+      });
+
+      // Initial syncen (falls beim Laden schon Text in kunde-notizen ist)
+      syncFromMain();
+    })();
+
+    // Kundenprofil-Popover: 6 Felder, Emoji ändert sich je nach Anzahl ausgefüllter Felder
+    (function setupProfilePopover() {
+      const btn = document.getElementById('floatingProfileBtn');
+      const popover = document.getElementById('profilePopover');
+      const closeBtn = document.getElementById('profilePopoverClose');
+      const iconEl = document.getElementById('floatingProfileIcon');
+      const progressEl = document.getElementById('profilePopoverProgress');
+      if (!btn || !popover) return;
+
+      const fieldEls = {
+        beruf: document.getElementById('profile-beruf'),
+        familienstand: document.getElementById('profile-familienstand'),
+        alter: document.getElementById('profile-alter'),
+        hobbys: document.getElementById('profile-hobbys'),
+        interessen: document.getElementById('profile-interessen')
+      };
+
+      // state.kundenDaten erweitern (falls noch nicht vorhanden)
+      if (!state.kundenDaten.profil) {
+        state.kundenDaten.profil = { beruf: '', familienstand: '', alter: '', hobbys: '', interessen: '', farbtypen: [] };
+      }
+      // Migration: alter farbtyp (Single) → farbtypen (Array)
+      if (!Array.isArray(state.kundenDaten.profil.farbtypen)) {
+        const alt = state.kundenDaten.profil.farbtyp;
+        state.kundenDaten.profil.farbtypen = alt ? [alt] : [];
+      }
+
+      // Emoji-Stufen: 0=🤷 (nichts) → 1-2=👤 → 3-4=🙂 → 5=😊 → 6=🌟
+      const emojiByCount = ['🤷', '👤', '👤', '🙂', '🙂', '😊', '🌟'];
+
+      const countFilled = () => {
+        const p = state.kundenDaten.profil;
+        let n = 0;
+        ['beruf','familienstand','alter','hobbys','interessen'].forEach(k => {
+          if (p[k] != null && String(p[k]).trim() !== '') n++;
+        });
+        // Farbtyp: zählt sobald mindestens einer gewählt ist
+        if (Array.isArray(p.farbtypen) && p.farbtypen.length > 0) n++;
+        return n;
+      };
+
+      const updateEmoji = () => {
+        const n = countFilled();
+        if (iconEl) iconEl.textContent = emojiByCount[Math.min(n, emojiByCount.length - 1)];
+        if (progressEl) progressEl.textContent = `${n} / 6 ausgefüllt`;
+      };
+
+      // Listener für Text-/Number-/Select-Felder
+      Object.keys(fieldEls).forEach(key => {
+        const el = fieldEls[key];
+        if (!el) return;
+        const handler = () => {
+          state.kundenDaten.profil[key] = el.value;
+          updateEmoji();
+        };
+        el.addEventListener('input', handler);
+        el.addEventListener('change', handler);
+      });
+
+      // Farbtyp-Chips: Reihenfolge 1, 2, 3 (Klick fügt hinzu / entfernt + nummeriert neu)
+      const chips = document.querySelectorAll('#profile-farbtyp-chips .color-chip');
+      const renderChips = () => {
+        const order = state.kundenDaten.profil.farbtypen || [];
+        chips.forEach(chip => {
+          // Alte Badge entfernen
+          const oldBadge = chip.querySelector('.color-chip-badge');
+          if (oldBadge) oldBadge.remove();
+          const color = chip.dataset.color;
+          const idx = order.indexOf(color);
+          if (idx >= 0) {
+            chip.classList.add('active');
+            const badge = document.createElement('span');
+            badge.className = 'color-chip-badge';
+            badge.textContent = String(idx + 1);
+            chip.appendChild(badge);
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+      };
+
+      chips.forEach(chip => {
+        chip.addEventListener('click', (event) => {
+          event.stopPropagation();
+          const color = chip.dataset.color;
+          const order = state.kundenDaten.profil.farbtypen;
+          const idx = order.indexOf(color);
+          if (idx >= 0) {
+            // Bereits in Liste → entfernen (verbleibende werden automatisch neu nummeriert)
+            order.splice(idx, 1);
+          } else {
+            // Noch nicht gewählt → hinten anhängen (= nächste Nummer)
+            order.push(color);
+          }
+          renderChips();
+          updateEmoji();
+        });
+      });
+
+      // Initial chip-state aus Profil rendern
+      renderChips();
+
+      const open = () => {
+        popover.classList.add('is-open');
+        popover.setAttribute('aria-hidden', 'false');
+        btn.classList.add('is-open');
+        requestAnimationFrame(() => fieldEls.beruf?.focus());
+      };
+      const close = () => {
+        popover.classList.remove('is-open');
+        popover.setAttribute('aria-hidden', 'true');
+        btn.classList.remove('is-open');
+      };
+
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (popover.classList.contains('is-open')) close();
+        else open();
+      });
+      closeBtn?.addEventListener('click', (event) => {
+        event.stopPropagation();
+        close();
+      });
+
+      // Klick außerhalb des Popovers schließt es
+      document.addEventListener('click', (event) => {
+        if (!popover.classList.contains('is-open')) return;
+        if (popover.contains(event.target)) return;
+        if (btn.contains(event.target)) return;
+        close();
+      });
+
+      // ESC schließt Popover
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && popover.classList.contains('is-open')) close();
+      });
+
+      // Initial Emoji setzen
+      updateEmoji();
+    })();
   </script>
+
 </body>
 </html>
