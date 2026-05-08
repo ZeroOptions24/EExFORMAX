@@ -570,6 +570,15 @@
   }
 
   .field-label .req { color: var(--red); font-weight: 700; }
+  .field-label .req-soft { color: var(--blue-accent); font-weight: 700; }
+
+  .field-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: -2px;
+    line-height: 1.45;
+  }
+  .field-hint.error { color: var(--red); font-weight: 600; }
 
   /* ── Submit ── */
   .submit-area {
@@ -912,7 +921,7 @@
 
     <div class="contact-section">
       <h3>Ihre Kontaktdaten</h3>
-      <p class="subtitle">Damit wir Ihnen den Gutschein und alle Infos zukommen lassen können.</p>
+      <p class="subtitle">Damit wir Ihnen den Gutschein und alle Infos zukommen lassen können. Mindestens eine Erreichbarkeit – Telefon oder E-Mail – wird benötigt.</p>
       <div class="field-grid">
         <div class="field">
           <label class="field-label" for="vorname">Vorname <span class="req">*</span></label>
@@ -922,9 +931,16 @@
           <label class="field-label" for="name">Name <span class="req">*</span></label>
           <input class="input" type="text" id="name" name="name" autocomplete="family-name" required>
         </div>
+        <div class="field">
+          <label class="field-label" for="telefon">Telefonnummer <span class="req-soft">*</span></label>
+          <input class="input" type="tel" id="telefon" name="telefon" autocomplete="tel" placeholder="z. B. 0151 1234567" inputmode="tel">
+        </div>
+        <div class="field">
+          <label class="field-label" for="email">E-Mail-Adresse <span class="req-soft">*</span></label>
+          <input class="input" type="email" id="email" name="email" autocomplete="email" placeholder="name@email.de">
+        </div>
         <div class="field span-2">
-          <label class="field-label" for="kontakt">Telefonnummer oder E-Mail-Adresse <span class="req">*</span></label>
-          <input class="input" type="text" id="kontakt" name="kontakt" placeholder="z. B. 0151 1234567 oder name@email.de" required>
+          <p class="field-hint" id="kontaktHint">* Bitte mindestens eines der beiden Felder ausfüllen.</p>
         </div>
       </div>
     </div>
@@ -965,10 +981,10 @@
 
 <script>
   // ── Webhook URL ─────────────────────────────────────────────
-  // Diese URL wird vom n8n Webhook-Node bereitgestellt.
-  // Test-URL: …/webhook-test/formaxx-tippgeber
-  // Produktiv:  …/webhook/formaxx-tippgeber
-  const WEBHOOK_URL = 'https://n8n.deine-domain.de/webhook/formaxx-tippgeber';
+  // n8n-Workflow: "Formaxx AG – Tippgeber-Formular → Pipedrive" (a.json)
+  // Test-URL:    https://energyengel.app.n8n.cloud/webhook-test/Formaxx
+  // Produktiv:   https://energyengel.app.n8n.cloud/webhook/Formaxx
+  const WEBHOOK_URL = 'https://energyengel.app.n8n.cloud/webhook/Formaxx';
   // ────────────────────────────────────────────────────────────
 
   const form = document.getElementById('tippgeberForm');
@@ -976,6 +992,9 @@
   const submitBtn = document.getElementById('submitBtn');
 
   const REQUIRED_FIELDS = ['q1', 'q2', 'q3', 'q4', 'vorname', 'name', 'kontakt'];
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const PHONE_RE = /^[+\d][\d\s\-()/]{5,}$/;
 
   const Q1_LABELS = {
     'weniger-12': 'Vor weniger als 12 Monaten',
@@ -1003,16 +1022,18 @@
 
   function updateProgress() {
     let filled = 0;
-    REQUIRED_FIELDS.forEach(name => {
-      const el = form.elements[name];
-      if (!el) return;
-      if (el.length !== undefined && el[0] && el[0].type === 'radio') {
-        if ([...el].some(r => r.checked)) filled++;
-      } else if (el.value && el.value.trim()) {
-        filled++;
-      }
-    });
-    const pct = (filled / REQUIRED_FIELDS.length) * 100;
+    const checks = [
+      () => [...form.elements['q1']].some(r => r.checked),
+      () => [...form.elements['q2']].some(r => r.checked),
+      () => [...form.elements['q3']].some(r => r.checked),
+      () => [...form.elements['q4']].some(r => r.checked),
+      () => form.elements['vorname'].value.trim().length > 0,
+      () => form.elements['name'].value.trim().length > 0,
+      () => form.elements['telefon'].value.trim().length > 0
+        || form.elements['email'].value.trim().length > 0
+    ];
+    checks.forEach(fn => { if (fn()) filled++; });
+    const pct = (filled / checks.length) * 100;
     progressFill.style.width = pct + '%';
   }
 
@@ -1027,16 +1048,18 @@
   form.querySelectorAll('input.input').forEach(input => {
     input.addEventListener('input', () => {
       input.classList.remove('error');
+      if (input.name === 'telefon' || input.name === 'email') {
+        const hint = document.getElementById('kontaktHint');
+        if (hint) {
+          hint.classList.remove('error');
+          hint.textContent = '* Bitte mindestens eines der beiden Felder ausfüllen.';
+        }
+        form.elements['telefon'].classList.remove('error');
+        form.elements['email'].classList.remove('error');
+      }
       updateProgress();
     });
   });
-
-  function detectKontaktTyp(value) {
-    const v = (value || '').trim();
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'email';
-    if (/^[+\d][\d\s\-()/]{5,}$/.test(v))      return 'phone';
-    return 'unknown';
-  }
 
   function buildPayload() {
     const get = name => (form.elements[name].value || '').trim();
@@ -1048,8 +1071,14 @@
     const q2 = radio('q2');
     const q3 = radio('q3');
     const q4 = radio('q4');
-    const kontakt    = get('kontakt');
-    const kontaktTyp = detectKontaktTyp(kontakt);
+    const email   = get('email');
+    const telefon = get('telefon');
+
+    let kontaktTyp = 'unknown';
+    let kontakt    = '';
+    if (email && telefon)      { kontaktTyp = 'both';  kontakt = email; }
+    else if (email)            { kontaktTyp = 'email'; kontakt = email; }
+    else if (telefon)          { kontaktTyp = 'phone'; kontakt = telefon; }
 
     return {
       source:       'formaxx-tippgeber-formular',
@@ -1059,8 +1088,8 @@
       name:         get('name'),
       kontakt:      kontakt,
       kontakt_typ:  kontaktTyp,
-      email:        kontaktTyp === 'email' ? kontakt : null,
-      telefon:      kontaktTyp === 'phone' ? kontakt : null,
+      email:        email   || null,
+      telefon:      telefon || null,
       antworten: {
         versicherungscheck:  { value: q1, label: Q1_LABELS[q1] || null },
         geldanlage:          { value: q2, label: Q2_LABELS[q2] || null },
@@ -1111,7 +1140,7 @@
       }
     });
 
-    ['vorname', 'name', 'kontakt'].forEach(fieldName => {
+    ['vorname', 'name'].forEach(fieldName => {
       const field = form.elements[fieldName];
       if (!field.value.trim()) {
         valid = false;
@@ -1119,6 +1148,42 @@
         if (!firstError) firstError = field;
       }
     });
+
+    const emailField   = form.elements['email'];
+    const telefonField = form.elements['telefon'];
+    const emailVal     = emailField.value.trim();
+    const telefonVal   = telefonField.value.trim();
+    const hint         = document.getElementById('kontaktHint');
+
+    if (!emailVal && !telefonVal) {
+      valid = false;
+      emailField.classList.add('error');
+      telefonField.classList.add('error');
+      if (hint) {
+        hint.classList.add('error');
+        hint.textContent = '* Bitte geben Sie Telefonnummer oder E-Mail an.';
+      }
+      if (!firstError) firstError = telefonField;
+    } else {
+      if (emailVal && !EMAIL_RE.test(emailVal)) {
+        valid = false;
+        emailField.classList.add('error');
+        if (hint) {
+          hint.classList.add('error');
+          hint.textContent = '* Bitte geben Sie eine gültige E-Mail-Adresse ein.';
+        }
+        if (!firstError) firstError = emailField;
+      }
+      if (telefonVal && !PHONE_RE.test(telefonVal)) {
+        valid = false;
+        telefonField.classList.add('error');
+        if (hint) {
+          hint.classList.add('error');
+          hint.textContent = '* Bitte geben Sie eine gültige Telefonnummer ein.';
+        }
+        if (!firstError) firstError = telefonField;
+      }
+    }
 
     if (!valid) {
       firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
